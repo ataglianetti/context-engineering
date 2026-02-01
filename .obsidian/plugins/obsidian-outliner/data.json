@@ -1,0 +1,13 @@
+{
+  "styleLists": true,
+  "debug": false,
+  "stickCursor": "bullet-only",
+  "betterEnter": true,
+  "betterVimO": false,
+  "betterTab": true,
+  "selectAll": true,
+  "listLines": true,
+  "listLineAction": "toggle-folding",
+  "dnd": true,
+  "previousRelease": null
+}

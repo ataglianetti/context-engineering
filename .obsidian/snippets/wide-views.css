@@ -1,0 +1,7 @@
+.wide-view {
+    --file-line-width: 1200px;
+}
+
+.full-view {
+    --file-line-width: 90%;
+}

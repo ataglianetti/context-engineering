@@ -1,0 +1,20 @@
+{
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Inbox",
+  "promptDelete": false,
+  "propertiesInDocument": "hidden",
+  "readableLineLength": true,
+  "attachmentFolderPath": "Resources/Attachments",
+  "alwaysUpdateLinks": true,
+  "defaultViewMode": "source",
+  "showLineNumber": false,
+  "showInlineTitle": false,
+  "pdfExportSettings": {
+    "includeName": false,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "2",
+    "downscalePercent": 100
+  },
+  "openBehavior": "daily"
+}

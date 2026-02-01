@@ -1,0 +1,31 @@
+{
+  "nativeMenus": false,
+  "enabledCssSnippets": [
+    "MCL Wide Views",
+    "aligned-callout-header-titles",
+    "MCL Gallery Cards",
+    "MCL Multi Column",
+    "Prism Mods by Nick Milo",
+    "full-width-note",
+    "full-width",
+    "bases-toolbar",
+    "bases-clean",
+    "dataview-columns",
+    "wide-views",
+    "force-epic-zap",
+    "checkbox-bug",
+    "checkbox-magic",
+    "nick-milo-pro-callouts",
+    "soft-links"
+  ],
+  "cssTheme": "Baseline",
+  "accentColor": "",
+  "baseFontSize": 16,
+  "interfaceFontFamily": "Inter,Lexend Deca,Atkinson Hyperlegible",
+  "textFontFamily": "Inter,Lexend Deca,Atkinson Hyperlegible",
+  "monospaceFontFamily": "Andale Mono,Atkinson Hyperlegible Mono",
+  "baseFontSizeAction": false,
+  "showViewHeader": true,
+  "showRibbon": true,
+  "translucency": true
+}

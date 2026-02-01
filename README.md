@@ -31,7 +31,9 @@ git clone https://github.com/ataglianetti/context-management-starter-kit.git
 1. Open Obsidian
 2. Click "Open folder as vault"
 3. Select the `context-management-starter-kit` folder
-4. Trust the folder when prompted
+4. Click "Trust author and enable plugins" when prompted
+
+The vault opens ready-to-use with theme, plugins, and hotkeys pre-configured.
 
 ### 3. Run Setup
 
@@ -52,6 +54,34 @@ git clone https://github.com/ataglianetti/context-management-starter-kit.git
 
 That's it. Claude will create your context folders, set up people tracking, and configure itself to work the way you work.
 
+## What's Included
+
+### Plugins (Pre-installed)
+
+| Plugin | Purpose |
+|--------|---------|
+| Templater | Smart templates with dates, prompts, scripting |
+| Dataview | Query your notes like a database |
+| Notebook Navigator | Enhanced file navigation with folder notes |
+| Omnisearch | Fast full-text search |
+| Calendar | Calendar view of daily notes |
+| Outliner | Better list editing (fold, move, zoom) |
+| Multi-column Markdown | Column layouts in notes |
+| Callout Manager | Custom callout styles |
+| Icon Folder | Folder icons for visual organization |
+| Frontmatter Modified Date | Auto-update modified dates |
+| URL Into Selection | Paste URLs as markdown links |
+| Style Settings | Theme customization options |
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+D` | Create/open today's daily note |
+| `Cmd+Shift+N` | Create note from template |
+| `Cmd+O` | Quick switcher |
+| `Cmd+P` | Command palette |
+
 ## What /setup Does
 
 The setup command guides you through a conversation to understand:
@@ -67,19 +97,7 @@ Based on your answers, it creates:
 - Personalized Claude instructions (so it knows your domain and style)
 - Initial memory state (so future sessions have continuity)
 
-## After Setup
-
-### Templater Plugin (Recommended)
-
-The templates in `Resources/Templates/` use [Templater](https://github.com/SilentVoid13/Templater). To use them:
-
-1. Install Templater from Community Plugins
-2. Set Template folder to `Resources/Templates`
-3. Enable "Trigger Templater on new file creation"
-
-This enables smart templates for meetings, documents, and people notes.
-
-### Daily Workflow
+## Daily Workflow
 
 - Create daily notes in `Calendar/` for logging work
 - Use meeting templates to capture notes with automatic context/attendee linking
@@ -106,7 +124,10 @@ Contexts/
 └── Personal/               (optional)
 
 Calendar/                   (daily notes, meetings, threads)
-Resources/Templates/        (note templates)
+Inbox/                      (quick capture)
+Resources/
+├── Templates/              (note templates)
+└── Attachments/            (images, files)
 
 .claude/
 ├── rules/                  (Claude instructions)
@@ -139,7 +160,6 @@ Create new `.md` files in `.claude/commands/` to define custom commands.
 
 - [Obsidian](https://obsidian.md/) (free)
 - [Claude Code](https://claude.ai/claude-code) (requires API access)
-- Optional: [Templater](https://github.com/SilentVoid13/Templater) plugin for smart templates
 
 ## Credits
 

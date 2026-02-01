@@ -1,0 +1,22 @@
+{
+  "callouts": {
+    "custom": [
+      "epic"
+    ],
+    "settings": {
+      "epic": [
+        {
+          "changes": {
+            "icon": "lucide-zap",
+            "color": "191, 99, 246"
+          }
+        }
+      ]
+    }
+  },
+  "calloutDetection": {
+    "obsidian": true,
+    "theme": false,
+    "snippet": false
+  }
+}

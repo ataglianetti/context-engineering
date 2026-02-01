@@ -1,0 +1,29 @@
+/* Force epic callout to use zap icon - trying multiple approaches */
+
+/* Try without lucide prefix */
+.callout[data-callout="epic"] {
+    --callout-icon: zap !important;
+}
+
+/* Try with higher specificity */
+body .callout[data-callout="epic"] {
+    --callout-icon: zap !important;
+    --callout-color: 191, 99, 246 !important;
+}
+
+/* Try with even higher specificity */
+.markdown-preview-view .callout[data-callout="epic"],
+.markdown-source-view .callout[data-callout="epic"] {
+    --callout-icon: zap !important;
+    --callout-color: 191, 99, 246 !important;
+}
+
+/* Nuclear option - target the icon directly */
+.callout[data-callout="epic"] .callout-icon .svg-icon {
+    color: rgb(191, 99, 246) !important;
+}
+
+/* Debug - make the whole callout background purple to confirm CSS is loading */
+.callout[data-callout="epic"] {
+    background-color: rgba(191, 99, 246, 0.1) !important;
+}
