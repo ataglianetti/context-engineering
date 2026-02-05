@@ -1,19 +1,7 @@
 # Memory
 
-*Updated when significant context changes. Read at session start for continuity.*
-
----
-
-## Active Work State
-
-### Current Priorities
-- (none yet)
-
-### Blockers & Waiting On
-- None currently
-
-### In Progress
-- None currently
+*Decisions, patterns, and open threads. Updated when these change (not every session).*
+*For per-project status, see `work-state.md`.*
 
 ---
 
@@ -47,15 +35,6 @@
 
 ### What Works Well
 - (to be learned)
-
----
-
-## Session Continuity
-
-### Last Session
-- **Date:** (not yet)
-- **Focus:** Initial setup
-- **Left off:** (not yet)
 
 ---
 

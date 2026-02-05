@@ -140,18 +140,18 @@ Once you have all the information, create the following files:
 **For Claude Code:**
 - Update `.claude/rules/core/user-profile.md` with gathered info
 - Update `.claude/rules/core/thinking-partner.md` with role-specific triggers
-- Update `.claude/rules/core/memory.md` with initial state
+- Update `.claude/rules/core/work-state.md` with initial project rows from Phase 4 (one row per project, grouped by context)
 - Create `.claude/rules/[context-name]/context.md` for each work context (with `paths:` frontmatter)
 
 **For Cursor/IDE:**
 - Create/update `CLAUDE.md` with all instructions inline
-- Create `memory.md` at vault root
-- Add instruction to CLAUDE.md: "Read memory.md at session start"
+- Create `memory.md` and `work-state.md` at vault root
+- Add instruction to CLAUDE.md: "Read memory.md and work-state.md at session start"
 
 **For Claude.ai/API:**
 - Create `claude-instructions.md` with portable instructions
-- Create `memory.md` at vault root
-- Note in README that user should include memory in system prompt
+- Create `memory.md` and `work-state.md` at vault root
+- Note in README that user should include both files in system prompt
 
 ### Onboarding Log:
 
