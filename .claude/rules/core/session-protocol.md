@@ -4,6 +4,7 @@
 - Both `work-state.md` and `memory.md` auto-load with rules
 - Scan `work-state.md` for Active/Blocked projects across all contexts
 - Check `memory.md` for relevant recent decisions or open threads
+- **Session log check:** When the user's first request targets a specific project, look for `Session Log.md` in that project's `Documents/` folder. If found, read the latest entry (first `###` block) to orient on intent and trajectory.
 - Reference previous context naturally: "Last time we were working on..."
 
 ## Session Close Detection
@@ -17,6 +18,9 @@ The key is recognizing the intent to close. Variations like "bye bye", "done for
 ## Session Close Process
 
 ### Always: Update `work-state.md`
+
+> **Date source:** Always use the `currentDate` value from system context. Never infer today's date from existing file contents.
+
 1. Update "Last Session" date
 2. For each project with activity this session:
 	- Update "Last Touched" date
@@ -30,6 +34,46 @@ Only when something in its sections actually changed:
 - New decision → add to Recent Decisions (keep last 10-15)
 - New open thread → add to Open Threads
 - New pattern learned → add to Patterns & Preferences
+
+### Conditionally: Offer Session Log
+
+Offer a session log entry when the session was **substantial** — any of:
+- Multi-step work on a single project
+- Decisions with alternatives considered
+- Paths explored and rejected
+- Work that shifted from original intent
+
+**Skip the offer** for quick Q&A, simple edits, routine updates.
+
+**Offer format:**
+> Session log entry for [Project]? (captures intent, outcome, findings, handoff)
+
+If accepted:
+1. Find or create `Session Log.md` in the project's `Documents/` folder
+2. **Prepend** a new entry (newest first) under the `# Session Log` heading
+3. Use this structure:
+
+```markdown
+### YYYY-MM-DD
+**Intent:** What the user came in to accomplish
+**Outcome:** What actually happened (especially if different from intent)
+**Findings:** Key learnings, hypotheses tested, paths ruled out and why
+**Next:** Explicit handoff — what the next session should pick up
+```
+
+4. If the file doesn't exist, create it as a Document:
+
+```yaml
+---
+type: Document
+document-type: Session Log
+context: "[[Context Name]]"
+about: "[[Project Name]]"
+created: YYYY-MM-DD
+---
+```
+
+Keep entries concise (3-5 lines per field max). The value is trajectory and reasoning, not exhaustive detail.
 
 ## Confirmation
 Always confirm at session close:

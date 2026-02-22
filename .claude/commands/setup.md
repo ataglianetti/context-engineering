@@ -6,6 +6,16 @@ You are guiding a new user through setting up their personal context management 
 
 Be warm, conversational, and non-technical. You're helping someone set up a powerful productivity system. Keep questions focused and don't overwhelm. Move through phases naturally, explaining what you're doing at each step.
 
+**Dictation-friendly.** Users may dictate answers. Expect run-on sentences, filler words, speech-to-text artifacts. Clean up their answers when generating files, but never change meaning.
+
+**No domain assumptions.** Every question adapts based on previous answers. Don't assume PM, engineering, or any specific field.
+
+**Generate, don't template.** thinking-partner.md and context rules are generated from interview answers, not filled from a template with brackets.
+
+**Progressive disclosure.** Basic setup (Phases 1-4) takes 10 minutes. Advanced configuration (Phases 5-6) is offered but optional.
+
+---
+
 ## Phase 0: Environment Detection
 
 Before asking anything, silently check the current state:
@@ -23,7 +33,7 @@ Before asking anything, silently check the current state:
 3. **Create missing root folders** (silently, only if needed):
    - `Contexts/` - if missing
    - `Calendar/` - if missing
-   - `Resources/Templates/` - if missing, copy templates from `_templates/`
+   - `Resources/Templates/` - if missing
 
 After detection, briefly tell the user what you found and what you'll be setting up.
 
@@ -118,6 +128,83 @@ Understand their current projects and responsibilities.
 
 ---
 
+## Phase 5: Thinking Partner Configuration
+
+Based on everything learned in Phases 1-4, generate a domain-appropriate thinking-partner.md.
+
+**Interview:**
+
+1. "When you're making a decision at work, what's the hardest part? Is it gathering enough information, weighing trade-offs, getting buy-in, or something else?"
+
+2. "What kind of pushback is most useful to you? Some people want their logic challenged. Others want someone to surface risks they missed. Others need help seeing the stakeholder perspective."
+
+3. "What decisions keep you up at night? Not the easy ones. The ones where the wrong call has real consequences."
+
+**Domain detection — based on their role from Phase 1, generate appropriate patterns:**
+
+| Domain Signal | Thinking Partner Focus |
+|---|---|
+| Engineering / Technical | Architecture decisions, technical debt, code review patterns, build-vs-buy |
+| Product Management | Trade-offs, scope management, stakeholder alignment, metrics |
+| Design / UX | User research, design system decisions, stakeholder alignment, accessibility |
+| Marketing / Growth | Positioning, campaign measurement, channel strategy, messaging |
+| Research / Academic | Methodology, evidence standards, publication strategy, peer review |
+| Operations / Program Mgmt | Process optimization, vendor management, capacity planning, risk |
+| Sales / Business Dev | Pipeline management, deal structure, competitive positioning |
+| Content / Communications | Audience strategy, editorial decisions, distribution, voice |
+| General / Hybrid | Stakeholder management, decision frameworks, communication strategy |
+
+**Generate from answers, don't template:**
+- **Trigger scenarios** specific to their domain and organizational dynamics
+- **Thinking behaviors** calibrated to their decision types
+- **Decision calibration table** using their actual decision types and commitment levels (from Phase 4)
+- **Push back patterns** informed by their described pressure points (from Phase 2)
+- **Stress test mode** (universal framework, domain-specific examples)
+
+---
+
+## Phase 6: Workflow Configuration
+
+Interview to determine which commands to install and how to configure the system for their actual workflow.
+
+**Interview:**
+
+1. "Walk me through a typical week. What does Monday morning look like? How about Friday?"
+
+2. "What tools do you use for communication? Email, Slack, Teams, something else?"
+
+3. "How many meetings do you have in a typical week? Are they mostly recurring or ad-hoc?"
+
+4. "Do you work on code or side projects? If so, where do the repos live?"
+
+**Based on answers, recommend commands:**
+
+| Signal | Commands to Install |
+|---|---|
+| Heavy meetings (5+/week) | meeting-notes, today |
+| Email/Slack/Teams heavy | save-thread, update-thread, draft-reply |
+| Writing or content creation | first-light, last-light, save-reference |
+| Project tracking / status reporting | project-status, weekly-note |
+| Code repos to track | daily-note (configure git repo mapping) |
+| Always install | update-memory, refresh |
+
+**Present recommendations** using AskUserQuestion with multiSelect:
+- Show which commands are recommended and why
+- Let user select which to install
+- "All recommended" should be an option
+
+**For selected commands:**
+1. Copy command files from `.claude/commands/` (they're already there from the repo)
+2. Configure daily-note git repo mapping if they have repos
+3. Set up hooks (validate-frontmatter, validate-dates, validate-wikilinks)
+
+**Final setup:**
+- Create initial daily note as "day zero"
+- Populate work-state.md with projects from Phase 4
+- Confirm hooks are active
+
+---
+
 ## After All Phases: Generate Files
 
 Once you have all the information, create the following files:
@@ -131,17 +218,23 @@ Once you have all the information, create the following files:
 
 2. **Person notes** for each person mentioned:
    - File: `Contexts/[Context Name]/People/[Person Name].md`
+   - Read `Resources/Templates/Person.md` for template structure
    - Frontmatter: type, context, company, title, teams (if known)
 
-3. **Templates** (copy from `_templates/` to `Resources/Templates/` if not already there)
+3. **Portfolio items** for each project from Phase 4:
+   - Create folder: `Contexts/[Context Name]/Portfolio/[Project Name]/`
+   - Create folder note: `[Project Name].md` with appropriate type (Initiative, Product, etc.)
+   - Create `Documents/` subfolder
 
 ### Claude Instructions (varies by interface):
 
 **For Claude Code:**
 - Update `.claude/rules/core/user-profile.md` with gathered info
-- Update `.claude/rules/core/thinking-partner.md` with role-specific triggers
-- Update `.claude/rules/core/work-state.md` with initial project rows from Phase 4 (one row per project, grouped by context)
+- **Generate** `.claude/rules/core/thinking-partner.md` from Phase 5 answers (not fill-in-the-blanks — write it as a complete, coherent rule file)
+- Update `.claude/rules/core/work-state.md` with initial project rows from Phase 4
+- Update `.claude/rules/core/writing-style.md` voice calibration table with their examples
 - Create `.claude/rules/[context-name]/context.md` for each work context (with `paths:` frontmatter)
+- If multiple contexts: create `.claude/rules/[context-name]/collaborators.md` with key people patterns
 
 **For Cursor/IDE:**
 - Create/update `CLAUDE.md` with all instructions inline
@@ -153,104 +246,32 @@ Once you have all the information, create the following files:
 - Create `memory.md` and `work-state.md` at vault root
 - Note in README that user should include both files in system prompt
 
-### Onboarding Log:
+### Onboarding Summary:
 
-Create `.claude/logs/onboarding-[YYYY-MM-DD].md` with:
-- Timestamp
-- User responses (summarized or verbatim key points)
-- Files generated (list with paths)
-- Any skipped sections or notes for improvement
+After generating all files, present a summary:
 
----
-
-## File Templates
-
-### user-profile.md (example output)
-
-```markdown
-# User Profile
-
-## Proficiency
-[Role] at [Company]. Skip basic explanations. Assume familiarity with:
-- [Domain expertise areas]
-- [Tools and technologies]
-- [Industry context]
-
-## Pacing
-- [Communication preference: direct/detailed]
-- Check in at decision points
-- [Any specific working style notes]
-
-## Purpose
-- Role: [Their role description]
-- Primary workflows: [Key activities]
-- Success measures: [What "good" looks like to them]
-
-## Disagreement Style
-Stakes-dependent:
-- **Low stakes:** State concern, then execute
-- **High stakes:** Continue pushing back with rationale
-- Always tie position to user success
-
-## Output Depth
-Context-dependent defaults:
-- [Type of work]: [Depth level]
-- [Type of work]: [Depth level]
 ```
+Setup complete! Here's what I created:
 
-### thinking-partner.md (example output)
+**Your vault:**
+- [N] context folders: [list]
+- [N] people tracked: [list]
+- [N] projects: [list]
 
-```markdown
-# [Role] Thinking Partner
+**Your rules:**
+- user-profile.md — your expertise and preferences
+- thinking-partner.md — [domain]-focused thinking partner
+- work-state.md — [N] projects tracked
+- [context].md — context rules for [each context]
 
-## Core Stance
-Partner for a [role level] [role]. Avoid sycophantic agreement. Only measure: does this response advance productive thinking?
+**Your commands:**
+- [N] commands installed: [list]
+- [N] hooks active: frontmatter validation, date validation, wikilink checking
 
-## Trigger Scenarios
-Engage as thinking partner when:
-- [Scenario relevant to their work]
-- [Scenario relevant to their work]
-- [Scenario relevant to their work]
-
-## Thinking Behaviors
-- [Behavior relevant to their domain]
-- [Behavior relevant to their domain]
-- Challenge assumptions about [domain-specific concerns]
-- Connect tactical decisions back to [their success measures]
-
-## When to Push Back
-- [Domain-specific situation]
-- [Domain-specific situation]
-- [Common trap in their field]
-
-## Decision Support
-- Lead with a clear recommendation when presenting options
-- Flag reversibility level to calibrate deliberation depth
-- [Domain-specific decision support]
-```
-
-### Context rule file (example output)
-
-```markdown
----
-paths:
-  - "Contexts/[Context Name]/**"
----
-
-# [Context Name] Context
-
-## Overview
-[Brief description of this context]
-
-## Key Dynamics
-- [Dynamics they mentioned]
-- [Pressure points]
-- [How decisions get made]
-
-## People
-Key relationships in this context:
-- [Boss]: [Role] - [relationship notes]
-- [Key person]: [Role] - [relationship notes]
+**Try these first:**
+- `/today` — morning briefing
+- `/first-light` — morning journal
+- `/daily-note` — end-of-day log
 ```
 
 ---
@@ -270,7 +291,10 @@ Key relationships in this context:
 "Input received. Now entering Phase 2: Organizational Context. Question 2.1: Manager name?"
 
 **Good:**
-"Alright, I've set everything up. You now have context folders for [contexts], with [N] people tracked. Your Claude instructions know you're a [role] who prefers [style]. Want me to walk you through what I created?"
+"Based on what you've told me, I think the most useful setup for you would include meeting processing, thread management, and daily logging. Sound right, or would you add or remove anything?"
+
+**Bad:**
+"Select commands to install from the following numbered list."
 
 ---
 
@@ -280,8 +304,10 @@ Key relationships in this context:
 
 **No portfolio yet:** That's fine. Create empty Portfolio/ folders. The system grows with use.
 
-**Non-work use:** If they're using this for personal projects, creative work, etc., adapt the questions. "Organization" becomes "area of focus."
+**Non-work use:** If they're using this for personal projects, creative work, etc., adapt the questions. "Organization" becomes "area of focus." Thinking partner adapts accordingly.
 
 **Existing setup:** If they already have contexts/people, ask what they want to update vs. keep.
 
 **Unsure about interface:** Default to Claude Code setup, note that structure can be flattened later if needed.
+
+**Skipping Phase 5-6:** If user says "that's enough" or signals they want to stop after Phase 4, generate files with template thinking-partner.md and install all commands. They can always run `/refresh` later.

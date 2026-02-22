@@ -10,9 +10,12 @@
 - Portfolio items: minimal metadata containers
 - Real analysis: Documents or Calendar
 - Meeting notes: concise bullets
-- Action items: plain bullets, not checkboxes
+- Meeting topic sections use `**bold text**`, not `##` headings
+- `## Summary` and `## Action Items` are the only H2s in meeting content
+- Action items: checkboxes (`- [ ]` open, `- [x]` done) live in meeting notes only — meeting notes are the single source of truth. Only the vault owner's commitments get checkboxes; others' next steps stay as plain bullets in topic sections. Daily and weekly notes reference open items as plain text with source links.
 - New notes: do NOT add to daily note (`/daily-note` gathers work at end of day)
 - H1 headings: Meeting, Person, Thread, and Document types include H1; other note types skip H1
+- Thread replies: when drafting a reply to a Thread note, always write the draft to the note (not just the conversation), even if `/draft-reply` wasn't explicitly invoked
 
 ## Proactive Behavior
 - Generally proactive, but for code changes: discuss approach before writing

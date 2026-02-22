@@ -1,168 +1,164 @@
-# Context Management Starter Kit
+# Context OS — Personal Knowledge System Starter Kit
 
-A personal knowledge management system powered by Claude. Organize your work across multiple contexts (jobs, projects, areas of focus) with AI that understands your role, relationships, and priorities.
+A personal operating system built on Claude Code and Obsidian. Persistent memory, modular rules, mechanical enforcement, and 14 commands that work for any knowledge worker.
+
+Not a template library. An architecture.
 
 ## What This Is
 
-This starter kit creates a structured Obsidian vault with:
+Most AI productivity systems give you templates and commands. This gives you the scaffolding that makes templates and commands reliable:
 
-- **Context folders** for each organization or area you work in
-- **People tracking** for colleagues and contacts you interact with
-- **Calendar integration** for meetings, daily notes, and email/Slack threads
-- **Claude instructions** personalized to your role and working style
-- **Persistent memory** so Claude remembers your priorities across sessions
+- **Memory that persists** — Two-file split (work state + decisions) with session protocol. Claude knows what you were doing yesterday.
+- **Context that loads** — Path-based rules. Work rules load for work files. Personal rules load for personal files. Neither pollutes the other.
+- **Enforcement that blocks** — PostToolUse hooks validate every file write. Missing frontmatter? Blocked. Stale dates? Blocked. Orphan wikilinks? Warned.
+- **Identity that adapts** — `/setup` interviews you and generates a thinking partner calibrated to your domain. Not a PM-specific challenger. Not a generic assistant. Yours.
+- **Structure that navigates** — Frontmatter is a map, not decoration. Types, parents, contexts tell the AI how to traverse your vault.
 
 ## Quick Start
 
-### 1. Get the Files
+### 1. Clone
 
-**Option A: Download ZIP**
-- Click the green "Code" button above
-- Select "Download ZIP"
-- Unzip to a location of your choice
-
-**Option B: Clone with Git**
 ```bash
 git clone https://github.com/ataglianetti/context-management-starter-kit.git
+cd context-management-starter-kit
 ```
 
 ### 2. Open in Obsidian
 
-1. Open Obsidian
-2. Click "Open folder as vault"
-3. Select the `context-management-starter-kit` folder
-4. Click "Trust author and enable plugins" when prompted
-
-The vault opens ready-to-use with theme, plugins, and hotkeys pre-configured.
+1. Open Obsidian → "Open folder as vault"
+2. Select the cloned folder
+3. Click "Trust author and enable plugins"
 
 ### 3. Run Setup
 
-1. Open your terminal
-2. Navigate to the vault folder:
-   ```bash
-   cd path/to/context-management-starter-kit
-   ```
-3. Start Claude Code:
-   ```bash
-   claude
-   ```
-4. Run the setup command:
-   ```
-   /setup
-   ```
-5. Answer the questions to personalize your system
+```bash
+claude
+/setup
+```
 
-That's it. Claude will create your context folders, set up people tracking, and configure itself to work the way you work.
+Answer the questions. Claude creates your context folders, people directory, portfolio items, thinking partner rules, and configures commands for your workflow. Takes about 10 minutes.
 
-## What's Included
+## What You Get
 
-### Plugins (Pre-installed)
+### Rules (12 files)
 
-| Plugin | Purpose |
-|--------|---------|
-| Templater | Smart templates with dates, prompts, scripting |
-| Dataview | Query your notes like a database |
-| Notebook Navigator | Enhanced file navigation with folder notes |
-| Omnisearch | Fast full-text search |
-| Calendar | Calendar view of daily notes |
-| Outliner | Better list editing (fold, move, zoom) |
-| Multi-column Markdown | Column layouts in notes |
-| Callout Manager | Custom callout styles |
-| Icon Folder | Folder icons for visual organization |
-| Frontmatter Modified Date | Auto-update modified dates |
-| URL Into Selection | Paste URLs as markdown links |
-| Style Settings | Theme customization options |
+| File | Purpose |
+|------|---------|
+| `core/user-profile.md` | Your expertise, preferences, pacing |
+| `core/thinking-partner.md` | Domain-calibrated thinking partner with stress test mode |
+| `core/memory.md` | Decisions, open threads, learned patterns |
+| `core/work-state.md` | Per-project status tracking |
+| `core/session-protocol.md` | Session start/close behavior, memory updates |
+| `core/writing-style.md` | Anti-AI tells, voice calibration, formatting |
+| `core/hard-walls.md` | Never-violate constraints |
+| `core/document-traversal.md` | How to navigate the vault graph |
+| `core/intent-interpretation.md` | When to ask vs. proceed |
+| `vault/file-management.md` | Note conventions, content patterns |
+| `vault/daily-notes.md` | Daily note format, git repo mapping |
+| `vault/summarization.md` | Accuracy rules for any summarization |
 
-### Keyboard Shortcuts
+### Commands (14)
 
-| Shortcut | Action |
-|----------|--------|
-| `Cmd+D` | Create/open today's daily note |
-| `Cmd+Shift+N` | Create note from template |
-| `Cmd+O` | Quick switcher |
-| `Cmd+P` | Command palette |
+| Command | What it does |
+|---------|-------------|
+| `/setup` | First-time onboarding (6 phases) |
+| `/today` | Morning briefing — meetings, open items, threads |
+| `/daily-note` | End-of-day log from vault + git activity |
+| `/meeting-notes` | Format rough notes into structured meeting note |
+| `/first-light` | Morning journal with dictation cleanup |
+| `/last-light` | Evening journal with dictation cleanup |
+| `/save-thread` | Save email/Slack/Teams thread |
+| `/update-thread` | Add replies to existing thread |
+| `/draft-reply` | Draft reply with person context |
+| `/weekly-note` | Weekly summary from daily notes |
+| `/project-status` | Status update for a context's projects |
+| `/save-reference` | Process article/video into Reference note |
+| `/research` | Deep research with web search |
+| `/refresh` | Re-onboarding to update stale rules |
+| `/update-memory` | Manual session close |
 
-## What /setup Does
+### Hooks (3)
 
-The setup command guides you through a conversation to understand:
+| Hook | Behavior | Enforcement |
+|------|----------|-------------|
+| `validate-frontmatter.sh` | Checks `type:` exists and is valid; checks `context:` on context-linked types | Blocks |
+| `validate-dates.sh` | Ensures memory/work-state dates match today | Blocks |
+| `validate-wikilinks.sh` | Finds wikilinks pointing to non-existent notes | Warns |
 
-- **Your role** - What you do, what you're expert at, how you prefer to communicate
-- **Your organizations** - Where you work, who you report to, key dynamics
-- **Key people** - Who you work with regularly
-- **Your work** - Current projects and priorities
+### Templates (20+)
 
-Based on your answers, it creates:
+Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Feature, Daily Note, Weekly Note, MOC, Definition, Reference, Post, Framework, and more.
 
-- Context folders with people directories
-- Personalized Claude instructions (so it knows your domain and style)
-- Initial memory state (so future sessions have continuity)
-
-## Daily Workflow
-
-- Create daily notes in `Calendar/` for logging work
-- Use meeting templates to capture notes with automatic context/attendee linking
-- Thread notes capture email and Slack conversations
-- Claude references your vault to maintain context
-
-### Claude Commands
-
-After setup, you can ask Claude:
-
-- "What am I working on?" (reads your memory and recent daily notes)
-- "Summarize my meetings this week" (traverses Calendar/)
-- "Who do I work with on [project]?" (checks people and context relationships)
-
-## Folder Structure
+## Architecture
 
 ```
-Contexts/
-├── [Your Org]/
-│   ├── [Your Org].md       (folder note)
-│   ├── Portfolio/          (projects, products, initiatives)
-│   ├── People/             (colleagues, contacts)
-│   └── Documents/          (context-level docs)
-└── Personal/               (optional)
-
-Calendar/                   (daily notes, meetings, threads)
-Inbox/                      (quick capture)
-Resources/
-├── Templates/              (note templates)
-└── Attachments/            (images, files)
-
 .claude/
-├── rules/                  (Claude instructions)
-│   ├── core/               (always loaded)
-│   └── vault/              (vault-wide patterns)
-└── commands/               (custom commands like /setup)
+├── rules/
+│   ├── core/           # Always loaded (~3K tokens)
+│   │   ├── hard-walls.md
+│   │   ├── user-profile.md
+│   │   ├── thinking-partner.md
+│   │   ├── memory.md
+│   │   ├── work-state.md
+│   │   ├── session-protocol.md
+│   │   ├── writing-style.md
+│   │   ├── document-traversal.md
+│   │   └── intent-interpretation.md
+│   ├── vault/          # Vault-wide patterns
+│   │   ├── file-management.md
+│   │   ├── daily-notes.md
+│   │   ├── summarization.md
+│   │   ├── clipboard.md
+│   │   └── vault-structure.md
+│   └── [context]/      # Created during /setup, loads per path
+│       ├── context.md
+│       └── collaborators.md
+├── commands/           # 14 slash commands
+├── hooks/              # PostToolUse validation
+└── settings.json       # Hook configuration
 ```
 
-## Customization
+**Core** loads every session. Your profile, memory, constraints, session mechanics. About 3K tokens.
 
-### Adding Contexts
+**Vault** loads for anything in this workspace. File conventions, note structure, daily note format.
 
-Run the Context template or ask Claude: "Help me add a new context for [organization]"
+**Context-specific** loads only for matching file paths. Each context folder declares its paths in frontmatter:
 
-### Modifying Rules
+```yaml
+---
+paths:
+  - "Contexts/Acme Corp/**"
+---
+```
 
-Claude's behavior is defined in `.claude/rules/`. Key files:
+The result: focused context that changes with what you're working on, not a monolith that loads everything always.
 
-- `core/user-profile.md` - Your expertise and communication style
-- `core/thinking-partner.md` - When/how Claude should push back or support decisions
-- `core/memory.md` - Persistent state across sessions
+## The Scaffolding/Content Split
 
-Edit these directly or ask Claude to update them based on what you learn works well.
+This repo contains scaffolding — rules, templates, memory architecture, hooks, commands. It does not contain content — your notes, people, projects, decisions.
 
-### Adding Commands
+That's the design. `/setup` generates content from your answers. The scaffolding is universal. The content is yours.
 
-Create new `.md` files in `.claude/commands/` to define custom commands.
+A PM gets scope management and trade-off analysis in their thinking partner. An engineer gets architecture review and technical debt patterns. A researcher gets methodology challenge and evidence standards. Same scaffolding. Different generated content.
 
 ## Requirements
 
 - [Obsidian](https://obsidian.md/) (free)
-- [Claude Code](https://claude.ai/claude-code) (requires API access)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (requires Anthropic API access)
+- macOS recommended (hooks use bash, icalBuddy for calendar)
+
+## Customization
+
+**Add a context:** Ask Claude to help, or create a folder in `Contexts/` and a matching rules folder.
+
+**Modify rules:** Edit `.claude/rules/` files directly. Core rules are always-on. Context rules load per path.
+
+**Add commands:** Create `.md` files in `.claude/commands/`. They become `/command-name` in Claude Code.
+
+**Update your profile:** Run `/refresh` for a guided re-interview, or edit `user-profile.md` directly.
 
 ## Credits
 
-Built with [Claude Code](https://claude.ai/claude-code) by Anthropic.
+Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) by Anthropic.
 
-Inspired by the idea that AI assistants work better when they understand your context, not just your immediate request.
+Context engineering principles from Aakash Gupta's "Context Engineering for PMs" — the framework alignment (Triple-I, 5-P, Two-Wall, N.O.W.) informed the rules architecture.

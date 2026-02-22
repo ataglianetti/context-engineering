@@ -1,1 +1,13 @@
 .DS_Store
+
+# Obsidian - machine-specific state
+.obsidian/workspace.json
+.obsidian/workspaces.json
+.obsidian/graph.json
+.obsidian/hotkeys.json
+
+# Claude Code - user-specific state
+.claude/logs/
+
+# Node
+node_modules/
