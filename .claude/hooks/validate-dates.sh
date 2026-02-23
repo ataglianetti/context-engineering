@@ -27,7 +27,7 @@ esac
 TODAY=$(date +%Y-%m-%d)
 
 if [[ "$BASENAME" == "work-state.md" ]]; then
-  # Check "Last Session" date line
+  # Check "Last Session" date line: ## Last Session\n- **Date:** YYYY-MM-DD
   LAST_SESSION=$(grep -A1 '## Last Session' "$FILE_PATH" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
   if [[ -n "$LAST_SESSION" && "$LAST_SESSION" != "$TODAY" ]]; then
     jq -n --arg written "$LAST_SESSION" --arg actual "$TODAY" '{
@@ -39,7 +39,7 @@ if [[ "$BASENAME" == "work-state.md" ]]; then
 fi
 
 if [[ "$BASENAME" == "memory.md" ]]; then
-  # Check "Last updated:" line at bottom
+  # Check "Last updated:" line at bottom of file
   LAST_UPDATED=$(grep -oE 'Last updated: [0-9]{4}-[0-9]{2}-[0-9]{2}' "$FILE_PATH" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
   if [[ -n "$LAST_UPDATED" && "$LAST_UPDATED" != "$TODAY" ]]; then
     jq -n --arg written "$LAST_UPDATED" --arg actual "$TODAY" '{
@@ -50,5 +50,5 @@ if [[ "$BASENAME" == "memory.md" ]]; then
   fi
 fi
 
-# All checks passed
+# All checks passed — exit silently
 exit 0

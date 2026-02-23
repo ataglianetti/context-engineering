@@ -3,7 +3,7 @@
 **When a file is mentioned, opened, or relevant:**
 1. **Read it first** - Never respond about a document without reading it
 2. **Follow frontmatter links** - Traverse `parent:`, `context:` to understand hierarchy
-3. **Check related folders** - Documents/ contains specs, analysis, drafts
+3. **Check related folders** - Documents/ contains specs, analysis, ticket drafts
 4. **Use what's documented** - If the answer exists in the vault, find it rather than guessing
 
 **Frontmatter is navigation, not decoration.** The linking structure maps relationships. Use it.
@@ -13,6 +13,7 @@ For current state of any project or work item:
 - Check recent Calendar/ daily notes for activity
 - Look for Meeting Notes documents linked to the project
 - Find Thread notes (emails, Slack, Teams) that capture ongoing conversations
+- Find what links TO a note (backlinks) rather than only following outbound links
 
 **Anti-pattern:** Inferring from filenames or folder paths when actual document content is accessible.
 
@@ -23,7 +24,7 @@ For current state of any project or work item:
 
 ## Wikilink Discipline
 
-When formatting or editing notes, follow this decision flow for each key entity (people, products, projects, features):
+When formatting or editing notes, follow this decision flow for each key entity (people, products, bugs, features):
 
 1. **Search** for vault notes matching the entity
 2. **Not found** → use plain text (no orphan wikilinks)

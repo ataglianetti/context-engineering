@@ -1,8 +1,4 @@
 {
-  "permissions": {
-    "allow": [],
-    "deny": []
-  },
   "hooks": {
     "PostToolUse": [
       {

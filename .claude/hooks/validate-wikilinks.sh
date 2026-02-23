@@ -14,7 +14,7 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [[ -z "$FILE_PATH" ]] && exit 0
 [[ "$FILE_PATH" != *.md ]] && exit 0
 
-# Skip excluded paths (but allow work-state.md)
+# Skip excluded paths (but allow work-state.md — project names should match vault notes)
 case "$FILE_PATH" in
   */rules/core/work-state.md) ;; # allow through
   */.claude/* | */Resources/Meta/Claude/* | */Resources/Templates/* | */Resources/Attachments/*) exit 0 ;;
@@ -27,7 +27,8 @@ esac
 VAULT_ROOT="$(cd "$(dirname "$FILE_PATH")" && while [[ ! -f ".obsidian/app.json" ]] && [[ "$PWD" != "/" ]]; do cd ..; done; pwd)"
 [[ "$VAULT_ROOT" == "/" ]] && exit 0
 
-# Build list of all note names (cached, 60s TTL)
+# Build list of all note names (basename without .md, lowercased for case-insensitive match)
+# Cache in /tmp for performance — rebuild if older than 60 seconds
 CACHE="/tmp/claude-vault-notes-cache"
 if [[ ! -f "$CACHE" ]] || [[ $(( $(date +%s) - $(stat -f %m "$CACHE" 2>/dev/null || echo 0) )) -gt 60 ]]; then
   find "$VAULT_ROOT" -name "*.md" -not -path "*/.trash/*" -not -path "*/.obsidian/*" | while read -r f; do
@@ -35,7 +36,11 @@ if [[ ! -f "$CACHE" ]] || [[ $(( $(date +%s) - $(stat -f %m "$CACHE" 2>/dev/null
   done | tr '[:upper:]' '[:lower:]' | sort -u > "$CACHE"
 fi
 
-# Extract wikilinks, skipping code blocks and Templater tags
+# Extract wikilinks from file content, skipping fenced code blocks and Templater tags
+# 1. Remove fenced code blocks
+# 2. Remove Templater tags
+# 3. Extract [[...]] links
+# 4. Strip aliases (|...) and headings (#...)
 LINKS=$(
   awk '
     /^```/ { in_code = !in_code; next }
@@ -49,7 +54,8 @@ LINKS=$(
   | sort -u
 )
 
-# For work-state.md: also extract project names from table
+# For work-state.md: also extract project names from table first column
+# These are plain text but should match vault notes
 if [[ "$FILE_PATH" == *"work-state.md" ]]; then
   PROJ_NAMES=$(
     grep -E '^\|[^|]+\| (Active|Blocked|Quiet|Paused) \|' "$FILE_PATH" \
@@ -63,7 +69,7 @@ fi
 
 [[ -z "$LINKS" ]] && exit 0
 
-# Check each link against cache
+# Check each link against the cache
 ORPHANS=()
 while IFS= read -r link; do
   [[ -z "$link" ]] && continue
@@ -74,6 +80,8 @@ while IFS= read -r link; do
 done <<< "$LINKS"
 
 if [[ ${#ORPHANS[@]} -gt 0 ]]; then
+  ORPHAN_LIST=$(printf ', ' ; printf '[[%s]]' "${ORPHANS[@]}" | sed 's/^, //')
+  # Format as comma-separated list
   FORMATTED=""
   for o in "${ORPHANS[@]}"; do
     [[ -n "$FORMATTED" ]] && FORMATTED="$FORMATTED, "
@@ -86,4 +94,5 @@ if [[ ${#ORPHANS[@]} -gt 0 ]]; then
   exit 0
 fi
 
+# All links valid — exit silently
 exit 0

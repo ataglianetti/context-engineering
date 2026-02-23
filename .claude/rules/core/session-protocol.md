@@ -4,8 +4,8 @@
 - Both `work-state.md` and `memory.md` auto-load with rules
 - Scan `work-state.md` for Active/Blocked projects across all contexts
 - Check `memory.md` for relevant recent decisions or open threads
-- **Session log check:** When the user's first request targets a specific project, look for `Session Log.md` in that project's `Documents/` folder. If found, read the latest entry (first `###` block) to orient on intent and trajectory.
-- Reference previous context naturally: "Last time we were working on..."
+- **Session log check:** When the user's first request targets a specific project, look for `Session Log.md` in that project's `Documents/` folder. If found, read the latest entry (first `###` block) to orient on intent and trajectory — richer context than work-state's "Left Off" alone.
+- Reference previous context naturally: "Last time in [context], we were working on..."
 
 ## Session Close Detection
 Update state when user signals session is ending. Recognize intent, not exact phrases:

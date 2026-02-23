@@ -3,26 +3,27 @@
 ## Hierarchy
 ```
 Contexts/
-├── [Organization Name]/
-│   ├── Portfolio/        (Projects, products, initiatives)
-│   ├── People/           (Colleagues, contacts)
-│   └── Documents/        (Context-level documents)
-└── Personal/             (Optional personal context)
+├── [Organization A]/Portfolio/      (Products, Initiatives)
+├── [Organization B]/Portfolio/      (Products, Initiatives)
+├── Personal/
+│   └── ...                          (Customize: side projects, creative work, etc.)
 
-Calendar/                 (Daily notes, meetings, threads)
+Calendar/                            (Daily notes, meetings)
 Resources/
-├── Frameworks/           (Operational tools, decision models)
-├── Reference/            (External articles, resources)
-├── Definitions/          (Standard terms)
-├── Templates/            (Note templates)
-└── Meta/                 (Claude rules, scripts)
+├── Frameworks/                      (Operational tools)
+├── Reference/                       (External articles)
+├── Definitions/                     (Standard terms)
+├── Templates/                       (Note templates)
+│   ├── Agents/                      (Agent prompt templates for coding projects)
+│   └── Commands/                    (Command templates deployed to projects)
+└── Meta/                            (Claude rules, scripts)
 ```
 
 ## Portfolio Folder Pattern
 ```
 [Item Name]/
 ├── [Item Name].md   (folder note)
-└── Documents/       (PRDs, specs, tickets, analysis)
+└── Documents/       (PRDs, specs, tickets)
 ```
 
 ## Note Types
@@ -31,7 +32,7 @@ Resources/
 - **Support:** Document, Definition, Application, Framework, Reference
 - **Calendar:** Journal, Meeting, Meeting Series, Thread
 - **People:** Person
-- **Content:** Post
+- **Creative:** Song
 
 ## Templates
 When creating new notes, read the corresponding template from `Resources/Templates/` first. Templates define required frontmatter and structure for each note type.

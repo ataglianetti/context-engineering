@@ -7,7 +7,7 @@ paths:
 
 ## Log Structure
 
-**Context headers:** Bold text (e.g., `**Organization Name**`)
+**Context headers:** Bold text (`**[Context Name]**`)
 
 **Whitespace:** Blank line between context groups only (not between projects within a context)
 
@@ -27,31 +27,33 @@ Example:
 ```markdown
 ### Log
 
-**Organization A**
-- [[Project A]]
-	- [[2026-02-04 Meeting Title|Meeting Alias]] - key outcome here
-	- [[Another Note|Short Name]] - summary of discussion
-- [[Project B]]
-	- Updated requirements document, added success metrics
+**[Organization A]**
+- [[Project Alpha]]
+	- [[2026-02-04 Weekly Standup|Standup]] - timeline risks flagged
+	- [[2026-02-04 Design Review|Design Review]] - option B selected
+- [[Project Beta]]
+	- [[...|Thread Title]] - requirements documented
 
-**Organization B**
-- [[Project C]]
-	- Drafted ticket for autocomplete feature
+**[Organization B]**
+- [[Project Gamma]]
+	- Drafted ticket for autocomplete fix
 
 **Personal**
 - [[Side Project]]
-	- `a1b2c3d` added new feature, refactored tests
+	- Renamed project, split into free core + expansion
+	- `a1b2c3d` template-first workflow
 ```
 
 ## Git Repo Mapping
 
-> **Configure during /setup.** Map your local repos to vault projects so `/daily-note` can group commits under the right project.
+Map your local repos to vault projects so `/daily-note` can attribute commits correctly.
 
 | Repo Path | GitHub Repo Name | Vault Project |
-|-----------|-----------------|---------------|
-| `~/Projects/example-repo` | `example-repo` | `[[Example Project]]` |
+|---|---|---|
+| `~/Projects/[org]/[repo-name]` | `[repo-name]` | `[[Project Name]]` |
+| `~/Projects/[repo-name]` | `[repo-name]` | `[[Project Name]]` |
 
-**GitHub matching:** GitHub results use `owner/repo-name` format. Match on the repo-name segment (after `/`) against the GitHub Repo Name column.
+**GitHub matching:** GitHub results use `owner/repo-name` format. Match on the repo-name segment (after `/`) against the GitHub Repo Name column. If the GitHub repo name doesn't appear in this table, fall back to matching against the last path segment of Repo Path.
 
 **Unpushed commits:** Local-only commits get a `(local)` marker: `` `a1b2c3d` (local) added provider ``
 

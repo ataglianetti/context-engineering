@@ -33,15 +33,15 @@ echo "**bold** text" | .claude/scripts/copy-rich.sh --rtf
 ## Encoding Notes
 
 The script normalizes special characters before conversion to avoid Windows encoding issues:
-- Em-dashes → double hyphens (`--`)
+- Em-dashes (`—`) → double hyphens (`--`)
 - Curly quotes → straight quotes
-- Ellipsis → three periods (`...`)
+- Ellipsis (`…`) → three periods (`...`)
 
-This prevents encoding artifacts that appear when UTF-8 content is misinterpreted as Windows-1252.
+This prevents the `â€"` artifacts that appear when UTF-8 content is misinterpreted as Windows-1252.
 
 ## Behavioral Pattern
 
-When user says "copy this to clipboard" or "I need to paste this in [app]":
+When user says "copy this to clipboard" or "I need to paste this in Teams":
 1. Confirm destination if ambiguous
 2. Run appropriate copy command
 3. Confirm success: "Copied as RTF for Teams"

@@ -1,13 +1,15 @@
 # Writing Style
 
 ## Scope
-These rules apply to ALL prose Claude generates — drafts, plans, final output. Don't defer style checks to "later."
+These rules apply to ALL prose Claude generates—drafts, plans, final output. Don't defer style checks to "later."
+
+Applies to: vault notes, drafts, external replies, professional communication. If you have a separate style guide for social media or casual platforms, reference it here.
 
 ## First Principle
 
 The user's voice must come through in everything we produce. AI is a speed tool, not a ghostwriter. If output reads as AI-generated, it undermines credibility and defeats the purpose.
 
-Every draft should pass the "could a person tell?" test. If a colleague or recipient would clock it as AI, rewrite.
+Every draft should pass the "could a person tell?" test. If a colleague, commenter, or recipient would clock it as AI, rewrite.
 
 ## Punctuation
 - Em-dashes are fine sparingly. The tell is *density*, not presence. Max ~1 per paragraph. When overused, replace with periods (for punch) or commas (for flow).
@@ -23,20 +25,20 @@ Every draft should pass the "could a person tell?" test. If a colleague or recip
 
 | Instead of | Use |
 |------------|-----|
-| "On X, ..." / "Regarding X, ..." | State the point directly, or use a transitional sentence |
-| "Here's what/how/the thing..." | Vary openers — start with the subject, a question, or context |
+| "On X, ..." / "Regarding X, ..." | State the point directly, or use a transitional sentence ("X works differently though.") |
+| "Here's what/how/the thing..." | Vary openers—start with the subject, a question, or context |
 | "One is X. The other is Y." (repeated) | Use once for contrast, then vary structure |
 
 ## Voice Calibration
 
-> **Customize this table during /setup.** Replace examples with your actual voice in each context.
+Customize this table to match YOUR voice across contexts:
 
 | Context | Register | Sounds like |
 |---|---|---|
-| Casual / internal | [Your casual voice] | [Example of how you actually talk to teammates] |
-| Stakeholder communication | [Your professional voice] | [Example of how you write to leadership] |
-| Documentation | [Your documentation voice] | [Example of your writing in specs/docs] |
-| External / public | [Your public voice] | [Example of blog posts, articles, public communication] |
+| Casual / social | [Your casual voice — blunt? sarcastic? warm?] | [Example phrase in your voice] |
+| Stakeholder email | [Your professional voice — direct? diplomatic?] | [Example phrase in your voice] |
+| Product docs | [Your documentation voice — precise? narrative?] | [Example phrase in your voice] |
+| Drafts for others | Match the recipient's expected register | Formal when needed, but never AI-formal |
 
 - Lead with recommendations, then rationale
 - Tables for structured comparisons

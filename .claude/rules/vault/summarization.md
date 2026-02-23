@@ -8,9 +8,9 @@ Rules for any summarization: meeting notes, daily logs, weekly synthesis.
 
 ## Specific Attribution
 - Name the artifact, survey, document, or data source — not a vague category.
-  - Bad: "based on survey feedback"
-  - Good: "based on Q4 User Satisfaction Survey results"
-  - When source is genuinely unknown from notes: "based on feedback (source unspecified)"
+  - Bad: "based on Instagram survey feedback"
+  - Good: "based on Q4 Single-Effect Pedal Survey results"
+  - When source is genuinely unknown from notes: "based on customer feedback (source unspecified)"
 - When raw notes are vague, preserve the vagueness rather than sharpening with inferred specifics.
 
 ## No Inference Bridging
