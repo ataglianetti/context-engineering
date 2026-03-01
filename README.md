@@ -157,6 +157,17 @@ A PM gets scope management and trade-off analysis in their thinking partner. An 
 
 **Update your profile:** Run `/refresh` for a guided re-interview, or edit `user-profile.md` directly.
 
+## Research
+
+Two 2026 papers provide empirical support for the modular, human-curated architecture this system uses:
+
+| Paper | Key Finding | Implication |
+|-------|-------------|-------------|
+| [Evaluating AGENTS.md](https://arxiv.org/abs/2602.11988) — Gloaguen et al. (ETH Zurich) | LLM-generated context files *reduce* task success while increasing cost 20%+. Developer-written files help marginally. | Auto-generated monolithic prompts hurt. Human curation and minimal, targeted instructions are what work. |
+| [SkillsBench](https://arxiv.org/abs/2602.12670) — Li et al. | Curated skills raise pass rates +16.2pp. 2-3 focused modules outperform comprehensive docs. Smaller model + skills > larger model without. | Modular beats monolithic. Context engineering is a capability multiplier, but only when curated by someone with domain knowledge. |
+
+Both papers independently confirm: self-generated context is flat or harmful, comprehensive documentation degrades performance, and the value comes from human judgment about what to include and what to leave out.
+
 ## Credits
 
 Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) by Anthropic.
