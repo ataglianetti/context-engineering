@@ -6,18 +6,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-frontmatter.sh\"",
-            "timeout": 5
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-frontmatter.sh\"",
+            "timeout": 5,
+            "statusMessage": "Validating frontmatter..."
           },
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-dates.sh\"",
-            "timeout": 5
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-dates.sh\"",
+            "timeout": 5,
+            "statusMessage": "Validating dates..."
           },
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-wikilinks.sh\"",
-            "timeout": 5
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-wikilinks.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking wikilinks..."
           }
         ]
       }

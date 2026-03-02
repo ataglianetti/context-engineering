@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+LOG="/tmp/claude-hook-debug.log"
+
 # Read tool input from stdin
 INPUT=$(cat)
 
@@ -21,6 +23,13 @@ case "$BASENAME" in
   *) exit 0 ;;
 esac
 
+# Skip rules directory (these are rules files, not vault notes)
+case "$FILE_PATH" in
+  */.claude/* | */Resources/Meta/Claude/*)
+    echo "$(date '+%H:%M:%S') validate-dates: rules path — skipped ($BASENAME)" >> "$LOG"
+    exit 0 ;;
+esac
+
 # Skip if file doesn't exist
 [[ ! -f "$FILE_PATH" ]] && exit 0
 
@@ -29,25 +38,31 @@ TODAY=$(date +%Y-%m-%d)
 if [[ "$BASENAME" == "work-state.md" ]]; then
   # Check "Last Session" date line: ## Last Session\n- **Date:** YYYY-MM-DD
   LAST_SESSION=$(grep -A1 '## Last Session' "$FILE_PATH" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
+  echo "$(date '+%H:%M:%S') validate-dates: work-state.md LAST_SESSION=$LAST_SESSION TODAY=$TODAY" >> "$LOG"
   if [[ -n "$LAST_SESSION" && "$LAST_SESSION" != "$TODAY" ]]; then
+    echo "$(date '+%H:%M:%S') validate-dates: BLOCKING — date mismatch" >> "$LOG"
     jq -n --arg written "$LAST_SESSION" --arg actual "$TODAY" '{
       decision: "block",
       reason: ("Last Session date is " + $written + ", but today is " + $actual + ". Use the system-provided currentDate.")
     }'
     exit 0
   fi
+  echo "$(date '+%H:%M:%S') validate-dates: work-state.md PASSED" >> "$LOG"
 fi
 
 if [[ "$BASENAME" == "memory.md" ]]; then
   # Check "Last updated:" line at bottom of file
   LAST_UPDATED=$(grep -oE 'Last updated: [0-9]{4}-[0-9]{2}-[0-9]{2}' "$FILE_PATH" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
+  echo "$(date '+%H:%M:%S') validate-dates: memory.md LAST_UPDATED=$LAST_UPDATED TODAY=$TODAY" >> "$LOG"
   if [[ -n "$LAST_UPDATED" && "$LAST_UPDATED" != "$TODAY" ]]; then
+    echo "$(date '+%H:%M:%S') validate-dates: BLOCKING — date mismatch" >> "$LOG"
     jq -n --arg written "$LAST_UPDATED" --arg actual "$TODAY" '{
       decision: "block",
       reason: ("Last updated date is " + $written + ", but today is " + $actual + ". Use the system-provided currentDate.")
     }'
     exit 0
   fi
+  echo "$(date '+%H:%M:%S') validate-dates: memory.md PASSED" >> "$LOG"
 fi
 
 # All checks passed — exit silently

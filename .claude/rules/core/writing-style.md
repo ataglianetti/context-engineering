@@ -11,8 +11,9 @@ The user's voice must come through in everything we produce. AI is a speed tool,
 
 Every draft should pass the "could a person tell?" test. If a colleague, commenter, or recipient would clock it as AI, rewrite.
 
-## Punctuation
-- Em-dashes are fine sparingly. The tell is *density*, not presence. Max ~1 per paragraph. When overused, replace with periods (for punch) or commas (for flow).
+## Rhythm & Pacing
+- **Sentence fragments are a tool, not a default.** Use them for emphasis or punch. But back-to-back fragments read as choppy AI output. When two or three short fragments stack up, join some with dashes, commas, or conjunctions to create flow. Mix short and long.
+- **Em-dashes are fine sparingly.** The tell is *density*, not presence. Max ~1 per paragraph. When overused, replace with periods (for punch) or commas (for flow).
 - Never default to em-dashes as a connective crutch. If three sentences in a row use them, rewrite.
 
 ## Patterns to Avoid
@@ -53,6 +54,11 @@ Customize this table to match YOUR voice across contexts:
 - **Abstraction over specifics:** "I've taken steps to address this" vs "I updated the README" — always pick the concrete version.
 - **Corporate slang:** "circle back," "leverage," "align on," "double-click on," "move the needle," "bandwidth" — never, in any register.
 - **Paragraph-ending thesis restatement:** Summarizing the point you just made in the last sentence. Fine once for emphasis. Back-to-back across paragraphs is a dead giveaway.
+
+## Tone Toward Readers
+- **Never punch down.** When writing for an audience, assume readers are capable people who haven't encountered this information yet -- not people who are behind.
+- Frame knowledge gaps as the information not having reached people yet, not people being behind. "That pattern hasn't made it to individual users yet" vs. "Individual users haven't caught on."
+- Show what you built and why. Let the work speak. Avoid implying others are doing it wrong -- show a better way and let them decide.
 
 ## Formatting
 - Use Obsidian-flavored markdown (tabs for nested bullets, wikilinks, callouts)

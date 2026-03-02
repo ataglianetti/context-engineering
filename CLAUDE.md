@@ -41,7 +41,9 @@ If `.claude/rules/core/user-profile.md` still contains placeholder text, run `/s
 | `/project-status` | Status update for projects in a context |
 | `/save-reference` | Process article/video into Reference note |
 | `/research` | Deep research with web search, capture to vault |
+| `/new-project` | Bootstrap a coding project with agent orchestration |
 | `/refresh` | Re-onboarding interview to update rules |
+| `/update` | Pull scaffolding updates from upstream without touching content |
 | `/update-memory` | Manually trigger session close memory updates |
 
 ## Folder Structure

@@ -29,6 +29,19 @@ The key is recognizing the intent to close. Variations like "bye bye", "done for
 3. Add new project rows when substantive work happens on something not yet tracked
 4. Remove projects Quiet for 14+ days (portfolio notes + daily notes retain history)
 
+### Conditionally: Update `registry.md`
+Only when action items were created, discussed, or completed this session:
+1. Add new action items from meeting notes processed this session
+2. Update state for items discussed (e.g., waiting → open, open → deferred)
+3. Remove completed items (source checkbox already `- [x]`)
+4. Verify resurface dates are still valid
+
+### Conditionally: Update milestone frontmatter on portfolio notes
+Only when milestone information changed this session:
+1. When milestone achieved: update its row in `## Status` table (set Date to actual, Status to Complete), then advance `milestone:` and `milestone-date:` to the next row from the table. If no more milestones, clear both fields.
+2. When milestone date shifts: update `milestone-date:` in frontmatter and the Date column in the Status table.
+3. When a new milestone is learned: add a row to the Status table and, if it's the next upcoming milestone, set it in frontmatter.
+
 ### Conditionally: Update `memory.md`
 Only when something in its sections actually changed:
 - New decision → add to Recent Decisions (keep last 10-15)

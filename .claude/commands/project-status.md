@@ -7,7 +7,7 @@ Generate a status update for projects within a context.
 **Input:** $ARGUMENTS
 - Required: Context name
 - Optional: Time window (default: 1 week)
-- Examples: "[Context Name]", "[Context Name] 2 weeks", "[Context Name] past month"
+- Examples: "Work", "Side Projects 2 weeks", "Work past month"
 
 **Workflow:**
 
@@ -17,7 +17,7 @@ Generate a status update for projects within a context.
    - Calculate date range
 
 2. **Find all projects in context:**
-   - Portfolio items in the context's Portfolio folder
+   - Scan Portfolio folder for the specified context
 
 3. **For each project, gather activity from the time window:**
    - Calendar entries (meetings, working sessions) with `about:` linking to project
@@ -26,7 +26,7 @@ Generate a status update for projects within a context.
    - Work item status changes (completed, started, blocked)
 
 4. **Ask user format preference:**
-   - Bullets or paragraph? (Note: adjust format to match the audience and context)
+   - Bullets or paragraph?
 
 5. **Generate status update per project:**
    - Focus on: decisions made, progress, blockers, next steps

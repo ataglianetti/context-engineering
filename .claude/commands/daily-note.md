@@ -1,30 +1,37 @@
 ---
-description: Generate daily note log from today's vault notes and git commits
+description: Generate daily note log from vault notes and git commits for a target date (default: today)
 ---
 
-Generate a synthesized log for today's daily note based on:
-- **Calendar/** notes created today (meetings, threads)
+Generate a synthesized log for a daily note based on:
+- **Calendar/** notes created that day (meetings, threads)
 - **Contexts/** changes via git diff (PRDs, specs, portfolio items)
 - **~/Projects** git commits
 
+**Arguments:**
+- No argument: today (current date)
+- Date specifier: `"2026-02-19"`, `"yesterday"`, or any parseable date string
+
+The target date flows through all steps below. When invoked by `/today` catch-up, a specific past date is passed.
+
 **Prerequisite:** `Contexts/` must be a git repo. Initialize with `cd [vault-path]/Contexts && git init && git add . && git commit -m "Initial commit"` if not already set up.
 
-**1. Find today's daily note**
-- Path: `Calendar/YYYY-MM-DD.md` (current date)
+**1. Find the daily note**
+- Parse target date from argument (default: today via `currentDate`)
+- Path: `Calendar/YYYY-MM-DD.md` (target date)
 - If it doesn't exist, create it using the Daily Note template located here:
 	- Resources/Templates/Daily Note.md
 
-**2. Find notes touched today**
+**2. Find notes touched on target date**
 
 **Calendar/ folder** (meeting notes, threads):
-- Search for files created today (use file creation date)
+- Search for files matching `Calendar/YYYY-MM-DD*.md` (target date prefix)
 - Include types: Meeting, Thread
 - These are event-based notes; their existence is the log entry
-- **Sanity check:** If search returns zero results, verify the query date matches the system date before assuming no notes exist. Zero Calendar notes on a workday warrants a second look.
+- **Sanity check:** If search returns zero results and target date is today, verify the query date matches the system date before assuming no notes exist. Zero Calendar notes on a workday warrants a second look.
 
 **Contexts/ folder** (git-tracked):
-- Run `git status` and `git diff` to find files with uncommitted changes
-- Run `git log --since="midnight"` to find files committed today
+- If target date is today: run `git status` and `git diff` for uncommitted changes, plus `git log --since="midnight"` for today's commits
+- If target date is in the past: run `git log --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day"` to find commits from that date. No `git status`/`git diff` (uncommitted changes can't be attributed to past dates).
 - For each changed file, extract the actual diff to summarize what changed (sections added, content removed, key edits)
 
 Skip:
@@ -37,13 +44,15 @@ Two-pass approach: GitHub API for pushed commits (works across machines), then l
 
 **3a. GitHub commits (primary)**
 
-Query today's pushed commits via `gh`:
+Query pushed commits for the target date via `gh`:
 ```bash
 # Get GitHub username
 GH_USER=$(gh api user --jq '.login')
 
-# Search commits authored today
-gh api "search/commits?q=author:${GH_USER}+committer-date:>=YYYY-MM-DD&sort=committer-date&per_page=100" \
+# Search commits for the target date (exact date match for backfill; >= for today)
+# Backfill (past date): committer-date:YYYY-MM-DD (exact day)
+# Today: committer-date:>=YYYY-MM-DD (same as before -- catches ongoing work)
+gh api "search/commits?q=author:${GH_USER}+committer-date:YYYY-MM-DD&sort=committer-date&per_page=100" \
   --header "Accept: application/vnd.github.cloak-preview+json" \
   --jq '.items[] | {sha: .sha[0:7], message: (.commit.message | split("\n") | .[0]), repo: .repository.full_name, url: .html_url}'
 ```
@@ -53,7 +62,7 @@ For each commit, extract:
 - Commit message (first line)
 - Repository name (use last path segment as repo name)
 
-**Repo to vault mapping:** Check `.claude/rules/vault/daily-notes.md` -> "Git Repo Mapping" table. Match GitHub repo names to local repo paths in the mapping table (compare the repo name segment, e.g., `user/[repo-name]` matches `~/Projects/[repo-name]`). If a match exists, group under that vault project.
+**Repo to vault mapping:** Check `.claude/rules/vault/daily-notes.md` -- "Git Repo Mapping" table. Match GitHub repo names to local repo paths in the mapping table (compare the repo name segment, e.g., `user/[repo-name]` matches `~/Projects/[repo-name]`). If a match exists, group under that vault project.
 
 Skip:
 - Merge commits
@@ -66,8 +75,9 @@ After GitHub results are collected, scan local repos for commits that haven't be
 ```bash
 find ~/Projects -name ".git" -type d -print0 | while IFS= read -r -d '' gitdir; do
   repo=$(dirname "$gitdir")
-  # Get today's commits that aren't on the remote tracking branch
-  git -C "$repo" log --oneline --since="midnight" --author="$(git -C "$repo" config user.email)" --not --remotes 2>/dev/null
+  # Target date bounds: --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day"
+  # For today: --since="midnight" is equivalent
+  git -C "$repo" log --oneline --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day" --author="$(git -C "$repo" config user.email)" --not --remotes 2>/dev/null
 done
 ```
 
@@ -144,11 +154,13 @@ Preserve:
 - Frontmatter
 - Any other sections (if present)
 
-**7. Commit Contexts/ changes**
+**7. Commit Contexts/ changes (today only)**
 
-After generating the log, commit today's Contexts/ changes to establish a clean baseline for tomorrow:
+After generating the log, commit Contexts/ changes to establish a clean baseline for tomorrow:
 - `cd [vault-path]/Contexts && git add . && git commit -m "Daily snapshot: YYYY-MM-DD"`
 - This ensures tomorrow's diff only shows tomorrow's work
+
+**Skip this step when target date is in the past.** Backfill runs should not create snapshot commits -- the current working tree state belongs to today, not the backfilled date.
 
 **8. Output**
 

@@ -95,10 +95,19 @@ Rules:
 - No "Other" category (insignificant items drop at weekly level)
 - Date range in H1 shows the Monday-Sunday span
 
-**6. Output**
+**6. Link to monthly note**
+
+Check if a monthly note exists for the month containing this week's Monday:
+- Look for `Calendar/YYYY-MM.md` (e.g., `Calendar/2026-02.md`)
+- If it exists, prepend the monthly link to the H1:
+  - `# W06 | February 3-9, 2026` → `# [[2026-02|Feb]] W06 | February 3-9, 2026`
+- If it doesn't exist, leave the H1 as-is (no orphan links)
+
+**7. Output**
 
 Show the generated weekly note. Confirm:
 - Number of daily notes processed
 - Date range covered
 - Number of projects summarized
 - Whether decisions were included
+- Whether monthly note link was added

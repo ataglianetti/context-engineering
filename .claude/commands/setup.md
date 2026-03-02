@@ -20,17 +20,29 @@ Be warm, conversational, and non-technical. You're helping someone set up a powe
 
 Before asking anything, silently check the current state:
 
-1. **Check existing structure:**
+1. **Check for previous setup:**
+   - Look for `.claude/setup-state.json`
+   - If found: this is a **re-run**. Read the file and present:
+     > "You've already run /setup (vX.Y.Z on YYYY-MM-DD). Your personalized files are intact."
+     >
+     > To update your profile, thinking partner, or add new contexts, run `/refresh` instead — it preserves everything and just updates what you specify.
+     >
+     > Running /setup again will overwrite your personalized files. Continue anyway?
+   - Use AskUserQuestion: "Run /refresh instead" (Recommended) / "Continue with fresh /setup" / "Cancel"
+   - If they choose /refresh: invoke `/refresh` and stop
+   - If they choose fresh setup: continue to step 2
+
+2. **Check existing structure:**
    - Look for `Contexts/`, `Calendar/`, `Resources/Templates/` folders
    - Check for existing `.claude/rules/` files or `CLAUDE.md`
    - Scan `Contexts/*/` for any existing context folders
 
-2. **Determine interface** (ask if unclear):
+3. **Determine interface** (ask if unclear):
    - Claude Code (terminal) → use `.claude/rules/` with path-based loading
    - Cursor / Windsurf / IDE → use flat `CLAUDE.md` file
    - Claude.ai / API only → create portable `claude-instructions.md`
 
-3. **Create missing root folders** (silently, only if needed):
+4. **Create missing root folders** (silently, only if needed):
    - `Contexts/` - if missing
    - `Calendar/` - if missing
    - `Resources/Templates/` - if missing
@@ -245,6 +257,28 @@ Once you have all the information, create the following files:
 - Create `claude-instructions.md` with portable instructions
 - Create `memory.md` and `work-state.md` at vault root
 - Note in README that user should include both files in system prompt
+
+### Write Setup State:
+
+After generating all files, write `.claude/setup-state.json`:
+
+```json
+{
+  "version": "<version from manifest.json>",
+  "date": "<today's date YYYY-MM-DD>",
+  "interface": "<claude-code|cursor|claude-ai>",
+  "contexts": ["Context Name 1", "Context Name 2"],
+  "content_files": [
+    ".claude/rules/core/user-profile.md",
+    ".claude/rules/core/thinking-partner.md",
+    ".claude/rules/core/writing-style.md",
+    ".claude/rules/[context]/context.md",
+    ".claude/rules/[context]/collaborators.md"
+  ]
+}
+```
+
+The `content_files` list records every file generated from interview answers (not scaffolding copied from repo). This lets `/update` know which files are personalized.
 
 ### Onboarding Summary:
 

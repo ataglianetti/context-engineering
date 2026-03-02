@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+LOG="/tmp/claude-hook-debug.log"
+
 # Read tool input from stdin
 INPUT=$(cat)
 
@@ -11,17 +13,22 @@ INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 # Skip if no file path or not a .md file
-[[ -z "$FILE_PATH" ]] && exit 0
-[[ "$FILE_PATH" != *.md ]] && exit 0
+[[ -z "$FILE_PATH" ]] && { echo "$(date '+%H:%M:%S') validate-wikilinks: no file path — skipped" >> "$LOG"; exit 0; }
+[[ "$FILE_PATH" != *.md ]] && { echo "$(date '+%H:%M:%S') validate-wikilinks: not .md — skipped" >> "$LOG"; exit 0; }
+
+BASENAME=$(basename "$FILE_PATH")
+echo "$(date '+%H:%M:%S') validate-wikilinks: checking $BASENAME" >> "$LOG"
 
 # Skip excluded paths (but allow work-state.md — project names should match vault notes)
 case "$FILE_PATH" in
   */rules/core/work-state.md) ;; # allow through
-  */.claude/* | */Resources/Meta/Claude/* | */Resources/Templates/* | */Resources/Attachments/*) exit 0 ;;
+  */.claude/* | */Resources/Meta/Claude/* | */Resources/Templates/* | */Resources/Attachments/*)
+    echo "$(date '+%H:%M:%S') validate-wikilinks: excluded path — skipped ($BASENAME)" >> "$LOG"
+    exit 0 ;;
 esac
 
 # Skip if file doesn't exist
-[[ ! -f "$FILE_PATH" ]] && exit 0
+[[ ! -f "$FILE_PATH" ]] && { echo "$(date '+%H:%M:%S') validate-wikilinks: file not found — skipped ($BASENAME)" >> "$LOG"; exit 0; }
 
 # Vault root (resolve symlink if needed)
 VAULT_ROOT="$(cd "$(dirname "$FILE_PATH")" && while [[ ! -f ".obsidian/app.json" ]] && [[ "$PWD" != "/" ]]; do cd ..; done; pwd)"
@@ -67,12 +74,20 @@ if [[ "$FILE_PATH" == *"work-state.md" ]]; then
   fi
 fi
 
-[[ -z "$LINKS" ]] && exit 0
+if [[ -z "$LINKS" ]]; then
+  echo "$(date '+%H:%M:%S') validate-wikilinks: no links found — skipped ($BASENAME)" >> "$LOG"
+  exit 0
+fi
+
+LINK_COUNT=$(echo "$LINKS" | wc -l | tr -d ' ')
+echo "$(date '+%H:%M:%S') validate-wikilinks: found $LINK_COUNT links to check ($BASENAME)" >> "$LOG"
 
 # Check each link against the cache
 ORPHANS=()
 while IFS= read -r link; do
   [[ -z "$link" ]] && continue
+  # Skip .base references (Dataview base files, not regular notes)
+  [[ "$link" == *.base ]] && continue
   LOWER_LINK=$(echo "$link" | tr '[:upper:]' '[:lower:]')
   if ! grep -qxF "$LOWER_LINK" "$CACHE"; then
     ORPHANS+=("$link")
@@ -87,6 +102,7 @@ if [[ ${#ORPHANS[@]} -gt 0 ]]; then
     [[ -n "$FORMATTED" ]] && FORMATTED="$FORMATTED, "
     FORMATTED="${FORMATTED}[[${o}]]"
   done
+  echo "$(date '+%H:%M:%S') validate-wikilinks: WARNING — ${#ORPHANS[@]} orphan(s): $FORMATTED ($BASENAME)" >> "$LOG"
   jq -n --arg orphans "$FORMATTED" '{
     decision: "warn",
     reason: ("Orphan wikilinks found: " + $orphans + ". These notes do not exist in the vault. Verify the link target or create the note first.")
@@ -94,5 +110,6 @@ if [[ ${#ORPHANS[@]} -gt 0 ]]; then
   exit 0
 fi
 
-# All links valid — exit silently
+# All links valid
+echo "$(date '+%H:%M:%S') validate-wikilinks: PASSED ($BASENAME)" >> "$LOG"
 exit 0

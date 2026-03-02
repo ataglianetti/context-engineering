@@ -1,6 +1,6 @@
 # Context OS — Personal Knowledge System Starter Kit
 
-A personal operating system built on Claude Code and Obsidian. Persistent memory, modular rules, mechanical enforcement, and 14 commands that work for any knowledge worker.
+A personal operating system built on Claude Code and Obsidian. Persistent memory, modular rules, mechanical enforcement, and 17 commands that work for any knowledge worker.
 
 Not a template library. An architecture.
 
@@ -40,7 +40,7 @@ Answer the questions. Claude creates your context folders, people directory, por
 
 ## What You Get
 
-### Rules (12 files)
+### Rules (15 files)
 
 | File | Purpose |
 |------|---------|
@@ -56,8 +56,11 @@ Answer the questions. Claude creates your context folders, people directory, por
 | `vault/file-management.md` | Note conventions, content patterns |
 | `vault/daily-notes.md` | Daily note format, git repo mapping |
 | `vault/summarization.md` | Accuracy rules for any summarization |
+| `vault/clipboard.md` | Clipboard copy formatting for external apps |
+| `vault/confidence-convention.md` | Confidence flagging for research output |
+| `vault/vault-structure.md` | Note types, hierarchy, portfolio patterns |
 
-### Commands (14)
+### Commands (17)
 
 | Command | What it does |
 |---------|-------------|
@@ -74,7 +77,9 @@ Answer the questions. Claude creates your context folders, people directory, por
 | `/project-status` | Status update for a context's projects |
 | `/save-reference` | Process article/video into Reference note |
 | `/research` | Deep research with web search |
+| `/new-project` | Bootstrap a coding project with agent orchestration |
 | `/refresh` | Re-onboarding to update stale rules |
+| `/update` | Pull scaffolding updates without touching content |
 | `/update-memory` | Manual session close |
 
 ### Hooks (3)
@@ -113,7 +118,7 @@ Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Featu
 │   └── [context]/      # Created during /setup, loads per path
 │       ├── context.md
 │       └── collaborators.md
-├── commands/           # 14 slash commands
+├── commands/           # 17 slash commands
 ├── hooks/              # PostToolUse validation
 └── settings.json       # Hook configuration
 ```
@@ -140,6 +145,21 @@ This repo contains scaffolding — rules, templates, memory architecture, hooks,
 That's the design. `/setup` generates content from your answers. The scaffolding is universal. The content is yours.
 
 A PM gets scope management and trade-off analysis in their thinking partner. An engineer gets architecture review and technical debt patterns. A researcher gets methodology challenge and evidence standards. Same scaffolding. Different generated content.
+
+## Updating
+
+The system separates **scaffolding** (rules, commands, hooks) from **content** (your profile, thinking partner, memory, work state). This means you can pull improvements without losing your personalized setup.
+
+```bash
+claude
+/update
+```
+
+`/update` reads `.claude/manifest.json` to classify every file. Scaffolding files get overwritten with upstream versions. Content files are never touched. Hybrid files (like `writing-style.md`, where your voice calibration rows are user content but the anti-AI tell rules are scaffolding) get section-level merges.
+
+The flow: fetch upstream manifest, compare versions, diff scaffolding files, present a summary, apply with your approval. No merge conflicts, no git gymnastics.
+
+If you cloned before `/update` existed (no `manifest.json`), running `/update` detects the legacy install and establishes the baseline.
 
 ## Requirements
 

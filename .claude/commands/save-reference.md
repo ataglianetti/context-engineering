@@ -17,7 +17,7 @@ Process a resource (article, video, PDF) into a Reference note:
 2. **Search vault** for related content:
    - Check if resource already captured
    - Find related Documents, Portfolio items, or people
-   - Identify which context this belongs to (your contexts or vault-wide)
+   - Identify which context this belongs to (or vault-wide)
 
 3. **Extract key insights:**
    - Core argument/thesis (1-2 sentences)

@@ -8,6 +8,7 @@
 
 # Claude Code - user-specific state
 .claude/logs/
+.claude/setup-state.json
 
 # Node
 node_modules/
