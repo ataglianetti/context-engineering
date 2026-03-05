@@ -17,9 +17,9 @@
 - Real analysis: Documents or Calendar
 - Meeting notes: concise bullets
 - Meeting topic sections use `**bold text**`, not `##` headings
-- `## Summary` and `## Action Items` are the only H2s in meeting content
+- `## Summary` is the only H2 in meeting content (besides `## Notes` for raw capture)
 - Key Signals and topic sections are complementary, not overlapping — signals cover decisions (one-liner), status shifts, and topics NOT expanded in topic sections below. If a signal duplicates a topic section's first bullet, rewrite or remove it.
-- Action items: checkboxes (`- [ ]` open, `- [x]` done) live in meeting notes only — meeting notes are the single source of truth. Only the vault owner's commitments get checkboxes; others' next steps stay as plain bullets in topic sections. Daily and weekly notes reference open items as plain text with source links; `/today` surfaces them on demand.
+- Next steps use plain-text bullets under a `**Next Steps**` bold heading (not H2, not checkboxes). Only the vault owner's commitments are listed; others' next steps stay in topic sections. Meeting notes are historical records, not task tracking.
 - New notes: do NOT add to daily note (`/daily-note` gathers work at end of day)
 - Monthly note Highlights: user-authored only, never auto-generated or modified by commands
 - H1 headings: Meeting, Person, Thread, and Document types include H1; other note types skip H1

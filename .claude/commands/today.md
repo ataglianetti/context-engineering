@@ -1,5 +1,5 @@
 ---
-description: Morning briefing -- today's meetings, open action items, threads needing attention
+description: Morning briefing -- today's meetings, reminders, next steps, threads needing attention
 ---
 
 Morning briefing showing what's on the docket. Separate from `/first-light` (journaling) and `/daily-note` (end-of-day log).
@@ -148,52 +148,22 @@ If no content deadlines are within 60 days, omit this section entirely.
 
 ---
 
-## 2. Open Items & Threads
+## 2. Reminders & Next Steps
 
-Collect all actionable items into a single numbered list for batch triage.
+**Reminders:** Read `.claude/reminders.md` for items where date ≤ today. Show each item with its date and source link, grouped by source context.
 
-### 2a. Gather open action items
+**Recent next steps:** Scan the last 5 meeting notes in `Calendar/` for `**Next Steps**` sections. Show items that haven't been referenced as resolved in subsequent meetings. Group by context, then by source meeting.
 
-**Primary source: registry.** Read `.claude/registry.md` Action Items table (created on first `/today` run if it doesn't exist). Apply state-based filtering:
+## 2.5. Follow-Up Threads
 
-| State | Behavior |
-|-------|----------|
-| `open` | Surface in main list |
-| `waiting` | Surface in main list with "(waiting on [person])" annotation |
-| `deferred` | Check resurface date -- skip if today < resurface, surface if today >= resurface |
-| `blocked` | Collect into separate "Blocked" group |
-| `someday` | Skip entirely (weekly review only) |
+Scan recent Thread notes (last 7 days) for:
 
-**Cross-reference with source notes:** For each registry item, verify the checkbox is still `- [ ]` in the source meeting note. If it's been marked `- [x]` outside triage, remove from registry silently.
+- Threads with `## Draft Reply` that haven't been sent (no follow-up Thread note or meeting referencing resolution)
+- Threads where the last message was from someone else (potential waiting-for-reply)
 
-**Catch new items:** Also grep Calendar/ meeting notes for unchecked `- [ ]` items not yet in the registry (current month + prior month). These surface as `open` with a "(new)" annotation. They get added to the registry during triage processing.
+Light touch -- just list them with one-line context.
 
-For each item, also check for existing sub-bullets (dated context updates from prior triage). Show the latest update inline if present.
-
-### 2b. Gather threads needing attention
-
-Scan recent Thread notes (last 30 days). Apply filters in order:
-
-**Step 1: Check `tracking:` frontmatter (fastest filter)**
-- `tracking: resolved` -> skip
-- `tracking: dismissed` -> skip
-- `tracking: waiting` -> include, show latest `## Tracking` sub-bullet as line
-- `tracking: active` or field absent -> proceed to Step 2
-
-**Step 2: Auto-resolution detection (fallback for untagged threads)**
-Before including a thread without explicit `tracking:` state, check if it's been addressed:
-- Search meeting notes and daily notes created *after* the thread for wikilinks to the thread note
-- If the thread is referenced in a subsequent meeting note or daily note log, it's been discussed -- don't surface it
-
-**Step 3: Attention signals (for threads that pass Steps 1-2)**
-Surface if any of:
-- Thread contains a message with `DRAFT` in the speaker line (unsent draft reply)
-- Last message in `## Thread` was from someone other than the vault owner (potential waiting-for-reply)
-- `tracking: waiting` (already included in Step 1)
-
-**Note:** The `tracking:` field is the primary persistence mechanism. Auto-resolution detection (Step 2) is a safety net for threads that were never triaged, not the primary filter. Once a thread goes through triage, its `tracking:` field governs all future scans.
-
-### 2c. Check yesterday's unfinished business
+## 2.6. Yesterday's Unfinished Business
 
 If yesterday's daily note (or most recent daily note with content) exists:
 - Items in the Log that reference "pending", "waiting", "TBD"
@@ -226,112 +196,44 @@ Present today's meetings, then milestones (Section 1.5), then immediately offer 
 -> Create selected notes
 -> Then continue to Workflow 2
 
-### Workflow 2: Open Items & Threads (Unified Triage)
+### Workflow 2: Reminders, Next Steps & Threads
 
-After meeting notes are handled, present all actionable items in a single numbered list. Group by context, with threads inline and stale items separated at the bottom.
+After meeting notes are handled, present reminders, recent next steps, threads, and yesterday's unfinished business.
 
 ```
-### Open Items & Threads (8)
+### Reminders (2)
+- Prepare contribution for Sync Week panel -- *Tech Team Status, Feb 24* (due Mar 10)
+- Check artwork iteration -- *1:1 with Designer, Mar 4* (due Mar 9)
+
+### Recent Next Steps
+**[Context Name]**
+- Send updated requirements -- *Planning Session, Feb 18*
+- Schedule follow-up meeting -- *Triage, Feb 17*
 
 **[Context Name]**
-1. [ ] Relay spec to teammate -- *Standup, Feb 25*
-2. [ ] Record demo clips for validation -- *1:1, Feb 25*
-3. [ ] Follow up on naming candidates -- *1:1, Feb 25*
+- Review design proposal -- *Design Review, Feb 18*
 
-**[Context Name]**
-4. ~thread~ Vendor Discussion -- competitor examples (6d)
-5. ~thread/waiting~ Partner Demo -- email sent, awaiting reply (4d)
-   > Feb 25: meeting scheduled for Tue March 3
+### Threads Needing Attention
+- Vendor discussion -- waiting on reply (3 days)
 
-**Blocked**
-6. [ ] Update PRD: parameter ranges -- waiting on teammate (Session, Feb 25)
-
-**Stale (14+ days)**
-7. [ ] Reach out re: graphics caveat -- *Sync, Jan 16* (34d)
-
-> 2 items deferred (next resurface: Mar 10)
-> 0 items someday
-
-> Triage: "1: done, 3: defer march 26, 5: waiting - demo scheduled, 6: waiting john, 7: close"
-> Items not mentioned stay as-is.
+> Triage reminders: respond with number + action (e.g., "1: done, 2: push to 3/15")
 ```
-
-**Numbering:** Continuous across all groups. Items with existing context updates show the latest sub-bullet so the user has full state before deciding.
 
 **Output is conversational, not written to any file.**
 
-## 4. Triage Processing
+## 4. Reminder Triage
 
-The user batch-responds with all decisions in one message. Process all at once -- do NOT step through items one by one.
+When reminders are due (date ≤ today), present them **numbered** and ask the user to batch-respond with all decisions at once. One round trip, not one per item.
 
-### Action vocabulary
+**User responds like:**
+> 1: done, 2: push to 3/20, 3: done - sent yesterday
 
-| Response | What happens |
-|----------|-------------|
-| `done` | Mark `- [x]` in source meeting note. Remove from registry. |
-| `close` | Mark `- [x]` in source meeting note. Remove from registry. |
-| `close - reason` | Mark `- [x]`, append reason as dated sub-bullet. Remove from registry. |
-| `defer <date>` | Set state=deferred + resurface date in registry. Hidden until that date. |
-| `defer <date> - reason` | Same + reason in Detail column. |
-| `waiting <person>` | Set state=waiting + person in Detail column. Surfaces daily with staleness. |
-| `blocked - reason` | Set state=blocked + reason in Detail column. Surfaces in "Blocked" group. |
-| `someday` | Set state=someday. Hidden from daily briefing, visible in weekly review only. |
-| Any other text | Leave `- [ ]`, append dated context update as sub-bullet in source note. Keep current registry state. |
-| *(not mentioned)* | No change. |
+**Then process all at once:**
+- "done" -> remove from reminders.md
+- "push to [date]" -> update date in reminders.md
+- If user adds context, no need to ask follow-ups -- just apply
 
-**Date parsing for `defer`:** Accept natural date formats: `march 15`, `3/15`, `2 weeks`, `next monday`, `1 month`. Resolve to ISO date (YYYY-MM-DD) in registry.
-
-**Registry sync:** Items found in grep but not yet in registry get added as `open` during triage. This keeps the registry growing naturally without a separate "add" step.
-
-Anything that isn't a recognized keyword (`done`, `close`, `defer`, `waiting`, `blocked`, `someday`) is treated as a context update.
-
-### Context update format
-
-Append a dated sub-bullet directly below the action item in the **source meeting note**:
-
-```markdown
-- [ ] Send normalized parameter mappings to teammate
-  - *Feb 23: discussed in 1:1, needs additional column first*
-```
-
-Next time `/today` surfaces this item, the latest update appears as a sub-bullet so the user sees current state without having to open the source note.
-
-### Thread triage
-
-Threads persist to the **thread note itself** (not a meeting note). Every triage decision writes to the vault.
-
-| Response | What happens |
-|----------|-------------|
-| `done` / `close` | Set `tracking: resolved` in thread note frontmatter |
-| `close - reason` | Set `tracking: resolved` + append dated sub-bullet to `## Tracking` |
-| `dismiss` | Set `tracking: dismissed` in thread note frontmatter |
-| `waiting` or `waiting - context` | Set `tracking: waiting` + append dated sub-bullet to `## Tracking` |
-| Any other text | Append dated sub-bullet to `## Tracking` (keep current `tracking:` value, or set `active`) |
-| *(not mentioned)* | No change |
-
-### Thread tracking section format
-
-If the thread note doesn't have a `## Tracking` section yet, create one after `## Summary` (before `## Key Points` or `## Thread`):
-
-```markdown
-## Tracking
-- *Feb 25: meeting scheduled for Tue March 3*
-- *Feb 27: demo went well, wants a follow-up proposal*
-```
-
-Next time `/today` surfaces this thread, the latest entry appears as a sub-bullet -- same pattern as action items.
-
-### Thread tracking field
-
-Add `tracking:` to frontmatter only on first triage (not on thread creation). Values:
-
-| Value | Meaning | `/today` behavior |
-|-------|---------|-------------------|
-| *(absent)* | Never triaged | Apply auto-detection (Step 2-3 in 2b) |
-| `active` | Actively needs attention | Always surface |
-| `waiting` | Ball in someone else's court | Surface with latest context |
-| `resolved` | Done, no more action | Skip |
-| `dismissed` | User doesn't want to track | Skip |
+Do NOT step through items one by one. The whole point is speed.
 
 ## 5. Meeting Note Creation
 

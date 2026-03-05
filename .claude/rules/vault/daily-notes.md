@@ -22,7 +22,7 @@ paths:
 **Summary length:** 3-8 words max per item. Key outcome only, not run-on sentences.
 
 **Do not include:**
-- Open action items from meeting notes. The `/today` command surfaces those on demand — daily notes log what happened, not what's pending.
+- Open next steps from meeting notes. The `/today` command surfaces those on demand — daily notes log what happened, not what's pending.
 - Cancelled meetings. If a Calendar note has no content (empty `## Notes` section), the meeting was cancelled — skip it in the log and delete the empty note.
 
 Example:

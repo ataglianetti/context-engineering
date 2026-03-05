@@ -67,19 +67,6 @@ week: YYYY-Www
 
 ## Decisions
 - Decision text (from memory.md, dated this week)
-
-## Open Items
-
-**Carry-Forward** (still open at end of week)
-
-**[Context Name]**
-- Item -- *Source Meeting, Date*
-
-**[Context Name]**
-- Item -- *Source Meeting, Date*
-
-**Completed This Week**
-- Item -- *Source Meeting, completed Date*
 ```
 
 Rules:
@@ -91,7 +78,6 @@ Rules:
 - Commits fold into project summary if repo is mapped
 - Unmapped repos appear under appropriate context by repo name (no "Code:" prefix)
 - Decisions section only appears if memory.md has entries from that week
-- **Open Items section:** Scan all Calendar/ meeting notes from the week for open and completed action items. List as plain bullets with source links (not checkboxes -- meeting notes are the single source of truth for checkbox state). Carry-forward = still open at week end. Completed = marked done during the week. Group by context. Omit section if no items.
 - No "Other" category (insignificant items drop at weekly level)
 - Date range in H1 shows the Monday-Sunday span
 

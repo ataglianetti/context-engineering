@@ -35,7 +35,7 @@ Per document-traversal, follow frontmatter links to build working context. **Max
 
 **Batch 2 (after Batch 1 completes -- uses Glob results):**
 - Read 2-3 most recent meetings from Glob results for continuing discussions
-- **Open items check:** Scan action items from those recent meetings. If the current meeting's content shows a prior action item was completed, mark it `- [x]` in the original note and mention what was resolved.
+- **Open items check:** Check recent meeting next steps for continuation or resolution signals. If the current meeting's content shows a prior next step was completed, note what was resolved.
 
 **Assemble lightweight context:**
 ```
@@ -47,7 +47,7 @@ Per document-traversal, follow frontmatter links to build working context. **Max
 
 === PRIOR MEETING ===
 Meeting: [name] (YYYY-MM-DD)
-Open Items: [unchecked action items]
+Open Next Steps: [unresolved next steps from prior meeting]
 ```
 
 ## 3. Spawn Agent
@@ -112,15 +112,25 @@ Key signals:
 
 **Topic B**
 - Key point
+
+**Next Steps**
+- Task I committed to
+- Another task I committed to
 ```
 
 **Key Signals rule:** Key Signals and topic sections are complementary, not overlapping. Signals cover decisions (one-liner), status shifts, brief context mentions, and topics NOT expanded below. If a Key Signal could be copy-pasted as a topic section's first bullet, it's redundant -- rewrite or remove.
 
 **Formatting rules:**
-- `## Summary` and `## Action Items` are the only H2 headings
+- `## Summary` is the only H2 heading
 - Topic sections use `**bold text**`, not `##`
+- Next Steps uses a `**Next Steps**` bold heading (not H2)
 - First person (I/me/my) for the vault owner throughout
 - No wikilinks yet -- Step 5 handles that after approval
+
+**Next steps:**
+- Plain-text bullets, not checkboxes. Meeting notes are historical records, not task tracking.
+- Only the vault owner's commitments. Other people's next steps stay in relevant topic sections.
+- If no commitments in raw notes, omit Next Steps section entirely
 
 **Build wikilink map from resolved entities (4a):**
 - **Plain text** (in frontmatter `about:` or `with:`): NO wikilinks in body
@@ -161,6 +171,6 @@ When user says "looks good", "yes", "write it", etc.:
 
 3. **Write** to the original file path
 
-4. **Cross-update** resolved prior action items (`- [ ]` -> `- [x]` in source meeting notes)
+4. **Cross-update** resolved prior next steps (note resolution in source meeting notes if applicable)
 
-5. **Confirm** with one-liner: "Note written. [N] action items included." Don't re-output the full note.
+5. **Confirm** with one-liner: "Note written." Don't re-output the full note.
