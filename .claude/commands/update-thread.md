@@ -20,9 +20,9 @@ Search `Calendar/` for notes with `type: Thread`.
 - Subject line similarity (helpful signal, but subjects get edited for clarity)
 
 **Disambiguation:**
-- Exactly one match -> proceed automatically
-- Multiple matches -> show candidates with one-liner, ask user to confirm
-- No matches -> ask user if this is a new thread (offer to run `/save-thread` instead)
+- Exactly one match → proceed automatically
+- Multiple matches → show candidates with one-liner, ask user to confirm
+- No matches → ask user if this is a new thread (offer to run `/save-thread` instead)
 
 Read the matched thread note fully.
 
@@ -32,33 +32,33 @@ The thread note already has `with:`, `about:`, and `context:` frontmatter. Follo
 
 ### Batch 1 (all in parallel)
 
-- **Read each person note** in `with:` -- Glob People folders for each name, then read found notes (aliases, title, discipline, teams)
-- **Read each project note** in `about:` -- read directly from vault (aliases, current state)
-- **Quick-scan new message** for names NOT in existing `with:` -> parallel person search across People folders
-- **Read context's collaborators** -- `.claude/rules/{context}/collaborators.md`
+- **Read each person note** in `with:` — Glob People folders for each name, then read found notes (aliases, title, discipline, teams)
+- **Read each project note** in `about:` — read directly from vault (aliases, current state)
+- **Quick-scan new message** for names NOT in existing `with:` → parallel person search across People folders
+- **Read context's collaborators** — `.claude/rules/{context}/collaborators.md`
 
 ### Batch 2 (after Batch 1)
 
 - **Read person notes for new participants** found in quick-scan
 - **Follow `parent:` links** from project notes to read parent portfolio items
-- **Recent related threads** -- Grep `Calendar/` for `type: Thread` notes with overlapping `about:` (excluding the current thread). Read Summary section of 2-3 most recent for continuation context.
+- **Recent related threads** — Grep `Calendar/` for `type: Thread` notes with overlapping `about:` (excluding the current thread). Read Summary section of 2-3 most recent for continuation context.
 
 ### Assemble Context Bundle
 
 Format as structured text for the agent:
-- `=== THREAD MODE ===` -> `update`
-- `=== PARTICIPANT PROFILES ===` -> from person note reads
-- `=== PROJECT/PRODUCT SCOPE ===` -> from project note reads
-- `=== ORGANIZATIONAL CONTEXT ===` -> from thread's `context:` + collaborators
-- `=== RECENT RELATED THREADS ===` -> summaries from recent matching threads
-- `=== EXISTING THREAD STATE ===` -> current summary, key points, and one-liner from the thread note
+- `=== THREAD MODE ===` → `update`
+- `=== PARTICIPANT PROFILES ===` → from person note reads
+- `=== PROJECT/PRODUCT SCOPE ===` → from project note reads
+- `=== ORGANIZATIONAL CONTEXT ===` → from thread's `context:` + collaborators
+- `=== RECENT RELATED THREADS ===` → summaries from recent matching threads
+- `=== EXISTING THREAD STATE ===` → current summary, key points, and one-liner from the thread note
 
 ## Step 4: Spawn Agent
 
 Spawn thread-processor agent via **Task tool** (Sonnet):
 
 ```
-Read the agent instructions at Resources/Templates/Agents/thread-processor.md, then process this update.
+Read the agent instructions at .claude/agents/thread-processor.md, then process this update.
 
 [Context Bundle]
 
@@ -68,7 +68,7 @@ Read the agent instructions at Resources/Templates/Agents/thread-processor.md, t
 
 The agent returns structured output with `=== SECTION ===` delimiters, including a `CHANGE_ASSESSMENT` of SUBSTANTIVE or MINOR.
 
-**Fallback:** If the agent fails or returns malformed output, process in-context. Don't fail -- degrade gracefully.
+**Fallback:** If the agent fails or returns malformed output, process in-context. Don't fail — degrade gracefully.
 
 ## Step 5: Post-Processing
 
@@ -79,7 +79,7 @@ Parse the agent's structured output and update the thread note.
 - Add `---` separator after the last message in the Thread section
 - Append the formatted new message from agent's `NEW_MESSAGE` section:
   ```
-  **Person Name -- [[YYYY-MM-DD|M/D/YYYY]] h:mm AM/PM**
+  **Person Name – [[YYYY-MM-DD|M/D/YYYY]] h:mm AM/PM**
 
   {clean message body}
   ```
@@ -119,7 +119,7 @@ For new participants added to `with:` who don't have vault notes:
 - Update `one-liner:` in frontmatter with agent's `UPDATED_ONE_LINER` (if focus shifted)
 
 **If MINOR:**
-- Skip content updates -- the message is appended but summary/key points remain unchanged
+- Skip content updates — the message is appended but summary/key points remain unchanged
 
 ### 5f. Save
 
@@ -133,11 +133,9 @@ Write the updated thread note.
 
 ## Rules
 
-- Person names in `with:` frontmatter -> plain text in body (frontmatter is the canonical graph connection)
-- Person names NOT in `with:` -> `[[First Last]]` wikilink on first body mention, plain text after
-- The vault owner ([Your Name]) -> plain text as sender in speaker headers
+- Person names in `with:` frontmatter → plain text in body (frontmatter is the canonical graph connection)
+- Person names NOT in `with:` → `[[First Last]]` wikilink on first body mention, plain text after
+- The vault owner ([Your Name]) → plain text as sender in speaker headers
 - Separate messages with `---`
-- **Preserve `## Tracking` section** -- if the thread note has a `## Tracking` section (from `/today` triage), do not modify or remove it. It persists triage context across sessions.
-- **Preserve `tracking:` frontmatter** -- do not remove or overwrite this field during updates
 - Preserve existing thread formatting
 - Chronological order maintained

@@ -61,7 +61,7 @@ Format the gathered context as structured text for the agent (see `agents/thread
 Spawn thread-processor agent via **Task tool** (Sonnet):
 
 ```
-Read the agent instructions at Resources/Templates/Agents/thread-processor.md, then process this thread.
+Read the agent instructions at .claude/agents/thread-processor.md, then process this thread.
 
 [Context Bundle]
 

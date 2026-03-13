@@ -9,7 +9,7 @@ Applies to: vault notes, drafts, external replies, professional communication. I
 
 The user's voice must come through in everything we produce. AI is a speed tool, not a ghostwriter. If output reads as AI-generated, it undermines credibility and defeats the purpose.
 
-Every draft should pass the "could a person tell?" test. If a colleague, commenter, or recipient would clock it as AI, rewrite.
+Every draft should pass the "could a person tell?" test. If a colleague, Reddit commenter, or recipient would clock it as AI, rewrite.
 
 ## Rhythm & Pacing
 - **Sentence fragments are a tool, not a default.** Use them for emphasis or punch. But back-to-back fragments read as choppy AI output. When two or three short fragments stack up, join some with dashes, commas, or conjunctions to create flow. Mix short and long.
@@ -32,13 +32,11 @@ Every draft should pass the "could a person tell?" test. If a colleague, comment
 
 ## Voice Calibration
 
-Customize this table to match YOUR voice across contexts:
-
 | Context | Register | Sounds like |
 |---|---|---|
-| Casual / social | [Your casual voice — blunt? sarcastic? warm?] | [Example phrase in your voice] |
-| Stakeholder email | [Your professional voice — direct? diplomatic?] | [Example phrase in your voice] |
-| Product docs | [Your documentation voice — precise? narrative?] | [Example phrase in your voice] |
+| Reddit / casual | Blunt, sarcastic, humor from the situation | [Your casual voice — blunt? sarcastic? warm?] |
+| Stakeholder email | Direct, opinionated, no corporate padding | [Your professional voice — direct? diplomatic? data-driven?] |
+| Product docs / PRDs | Clean and precise, personality in framing not language | [Your documentation voice — precise? conversational? structured?] |
 | Drafts for others | Match the recipient's expected register | Formal when needed, but never AI-formal |
 
 - Lead with recommendations, then rationale
@@ -56,9 +54,9 @@ Customize this table to match YOUR voice across contexts:
 - **Paragraph-ending thesis restatement:** Summarizing the point you just made in the last sentence. Fine once for emphasis. Back-to-back across paragraphs is a dead giveaway.
 
 ## Tone Toward Readers
-- **Never punch down.** When writing for an audience, assume readers are capable people who haven't encountered this information yet -- not people who are behind.
+- **Never punch down.** When writing for an audience, assume readers are capable people who haven't encountered this information yet.
 - Frame knowledge gaps as the information not having reached people yet, not people being behind. "That pattern hasn't made it to individual users yet" vs. "Individual users haven't caught on."
-- Show what you built and why. Let the work speak. Avoid implying others are doing it wrong -- show a better way and let them decide.
+- Show what you built and why. Let the work speak. Avoid implying others are doing it wrong — show a better way and let them decide.
 
 ## Formatting
 - Use Obsidian-flavored markdown (tabs for nested bullets, wikilinks, callouts)

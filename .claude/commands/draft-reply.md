@@ -15,28 +15,28 @@ Read the thread note from Calendar folder. Parse the full Thread section to unde
 
 ## Step 2: Gather Context
 
-Follow the thread note's frontmatter links to build a rich context bundle. Reply mode needs the fullest person profiles -- Working With sections inform tone and framing.
+Follow the thread note's frontmatter links to build a rich context bundle. Reply mode needs the fullest person profiles — Working With sections inform tone and framing.
 
 ### Batch 1 (all in parallel)
 
-- **Read each person note** in `with:` -- Glob People folders (`Contexts/*/People/`) for each name, then read found notes. **Include Working With section** (communication patterns, decision-making style, political dynamics -- these directly inform the draft)
-- **Read each project note** in `about:` -- read directly from vault (aliases, current state)
-- **Read context's collaborators** -- `.claude/rules/{context}/collaborators.md`
+- **Read each person note** in `with:` — Glob People folders (`Contexts/*/People/`) for each name, then read found notes. **Include Working With section** (communication patterns, decision-making style, political dynamics — these directly inform the draft)
+- **Read each project note** in `about:` — read directly from vault (aliases, current state)
+- **Read context's collaborators** — `.claude/rules/{context}/collaborators.md`
 
 ### Batch 2 (after Batch 1)
 
 - **Follow `parent:` links** from project notes to read parent portfolio items (reply may need broader context)
-- **Recent related threads** -- Grep `Calendar/` for `type: Thread` notes with overlapping `about:` (excluding the current thread). Read Summary section of 2-3 most recent -- the reply may need to reference prior exchanges.
+- **Recent related threads** — Grep `Calendar/` for `type: Thread` notes with overlapping `about:` (excluding the current thread). Read Summary section of 2-3 most recent — the reply may need to reference prior exchanges.
 
 ### Assemble Context Bundle
 
 Format as structured text for the agent:
-- `=== THREAD MODE ===` -> `reply`
-- `=== PARTICIPANT PROFILES ===` -> from person note reads (with Working With content)
-- `=== PROJECT/PRODUCT SCOPE ===` -> from project note reads
-- `=== ORGANIZATIONAL CONTEXT ===` -> from thread's `context:` + collaborators
-- `=== RECENT RELATED THREADS ===` -> summaries from recent matching threads
-- `=== EXISTING THREAD STATE ===` -> current summary, key points, and one-liner
+- `=== THREAD MODE ===` → `reply`
+- `=== PARTICIPANT PROFILES ===` → from person note reads (with Working With content)
+- `=== PROJECT/PRODUCT SCOPE ===` → from project note reads
+- `=== ORGANIZATIONAL CONTEXT ===` → from thread's `context:` + collaborators
+- `=== RECENT RELATED THREADS ===` → summaries from recent matching threads
+- `=== EXISTING THREAD STATE ===` → current summary, key points, and one-liner
 
 ## Step 3: Spawn Agent
 
@@ -53,16 +53,16 @@ Read the agent instructions at .claude/agents/thread-processor.md, then draft a 
 
 The agent returns: tone assessment, draft reply, and coverage checklist.
 
-**Fallback:** If the agent fails or returns malformed output, draft the reply in-context using the same context bundle. Don't fail -- degrade gracefully.
+**Fallback:** If the agent fails or returns malformed output, draft the reply in-context using the same context bundle. Don't fail — degrade gracefully.
 
 ## Step 4: Present and Iterate
 
 ### 4a. Show Draft
 
 Present to the user:
-- **Tone assessment** -- register and thread dynamic from agent
-- **Draft reply** -- the full text
-- **Coverage** -- what's addressed, what's not (with reasons)
+- **Tone assessment** — register and thread dynamic from agent
+- **Draft reply** — the full text
+- **Coverage** — what's addressed, what's not (with reasons)
 
 ### 4b. Iterate
 
@@ -94,19 +94,19 @@ When the user approves the draft:
   EOF
   ```
 - Strip markdown formatting (remove `**` bold markers, wikilinks, etc.)
-- Convert wikilinks to plain names: `[[John Smith]]` -> `John Smith`
+- Convert wikilinks to plain names: `[[John Smith]]` → `John Smith`
 - Use regular hyphens, not en-dashes
 
 ### 5c. Update Thread Note (after sent)
 
 When the user confirms they've sent the reply:
 - Update the DRAFT header with actual date/time:
-  `**[Your Name] -- [[YYYY-MM-DD|M/D/YYYY]] h:mm AM/PM**`
+  `**[Your Name] – [[YYYY-MM-DD|M/D/YYYY]] h:mm AM/PM**`
 - Save the updated note
 
 ## Rules
 
-- Draft uses first person (I/me/my) -- never refers to vault owner in third person
-- Match thread tone -- don't go formal when thread is casual, or vice versa
+- Draft uses first person (I/me/my) — never refers to vault owner in third person
+- Match thread tone — don't go formal when thread is casual, or vice versa
 - Bracket unknowns: `[specific date TBD]`, `[confirm with engineering first]`
 - Working With context from person notes informs framing, not just tone

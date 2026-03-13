@@ -3,27 +3,25 @@
 ## Hierarchy
 ```
 Contexts/
-├── [Organization A]/Portfolio/      (Products, Initiatives)
-├── [Organization B]/Portfolio/      (Products, Initiatives)
+├── [Organization A]/Portfolio/     (Projects, products, initiatives)
+├── [Organization B]/Portfolio/     (Projects, products, initiatives)
 ├── Personal/
-│   └── ...                          (Customize: side projects, creative work, etc.)
+│   └── ... (Customize: side projects, creative work, etc.)
 
-Calendar/                            (Daily notes, meetings)
+Calendar/                            (Daily notes, weekly/monthly summaries, meetings)
 Resources/
 ├── Frameworks/                      (Operational tools)
 ├── Reference/                       (External articles)
 ├── Definitions/                     (Standard terms)
 ├── Templates/                       (Note templates)
-│   ├── Agents/                      (Agent prompt templates for coding projects)
-│   └── Commands/                    (Command templates deployed to projects)
-└── Meta/                            (Claude rules, scripts)
+└── Meta/                            (System config)
 ```
 
 ## Portfolio Folder Pattern
 ```
 [Item Name]/
 ├── [Item Name].md   (folder note)
-└── Documents/       (PRDs, specs, tickets)
+└── Documents/       (PRDs, TRDs, specs, tickets)
 ```
 
 ## Note Types

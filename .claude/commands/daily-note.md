@@ -138,7 +138,7 @@ Rules:
 - **Summaries:** 3-8 words max, key outcome only (not run-on sentences)
 - **Meetings/threads:** Wikilink with alias + short summary
 - **Vault work:** Plain text description (no prefix)
-- **Code work:** Commit ID in backticks + brief description (e.g., `` `a1b2c3d` added Deepgram provider ``)
+- **Code work:** Commit ID in backticks + brief description (e.g., `` `a1b2c3d` added provider ``)
 - **Combined work:** If both vault and code work, combine naturally
 - Use full wikilinks on parent items, no aliases
 - Use aliases on nested items (strip date prefix, shorten long titles)

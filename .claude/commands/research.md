@@ -24,7 +24,7 @@ Research mode - investigate a topic and capture findings:
 - Place in parent item's Documents/ folder per portfolio structure
 - Link to related notes
 
-**Confidence:** Flag findings using the convention in `rules/vault/confidence-convention.md` -- HIGH/MEDIUM/LOW with evidence. "Couldn't determine" is a valid result.
+**Confidence:** Flag findings using the convention in `.claude/rules/vault/confidence-convention.md` — HIGH/MEDIUM/LOW with evidence. "Couldn't determine" is a valid result.
 
 **Style:**
 - Concise synthesis, not exhaustive reports

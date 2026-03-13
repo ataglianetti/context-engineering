@@ -29,12 +29,11 @@ The key is recognizing the intent to close. Variations like "bye bye", "done for
 3. Add new project rows when substantive work happens on something not yet tracked
 4. Remove projects Quiet for 14+ days (portfolio notes + daily notes retain history)
 
-### Conditionally: Update `registry.md`
-Only when action items were created, discussed, or completed this session:
-1. Add new action items from meeting notes processed this session
-2. Update state for items discussed (e.g., waiting → open, open → deferred)
-3. Remove completed items (source checkbox already `- [x]`)
-4. Verify resurface dates are still valid
+### Conditionally: Update `reminders.md`
+Only when reminders were created, completed, or date-pushed this session:
+1. Add new reminders from meeting next steps with future trigger dates
+2. Remove completed reminders
+3. Update dates for pushed reminders
 
 ### Conditionally: Update milestone frontmatter on portfolio notes
 Only when milestone information changed this session:

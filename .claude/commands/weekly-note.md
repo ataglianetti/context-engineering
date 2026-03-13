@@ -32,7 +32,7 @@ For each project that appeared in any daily note:
 - Consolidate all activity into a single narrative summary
 - Capture: what happened, what decisions were made, what moved forward
 - Don't list individual items; synthesize into coherent description
-- **Synthesis guardrails:** Do not connect projects or events that daily notes did not explicitly connect. If a project had multiple unrelated threads during the week, keep them as separate clauses -- not a unified narrative arc.
+- **Synthesis guardrails:** Do not connect projects or events that daily notes did not explicitly connect. If a project had multiple unrelated threads during the week, keep them as separate clauses — not a unified narrative arc.
 
 For code work:
 - If repo is mapped to a vault project, fold into that project's summary
@@ -61,12 +61,13 @@ week: YYYY-Www
 **[Context Name]**
 - [[Project C]] - Summary
 
-**Personal**
+**[Context Name]**
 - [[Project D]] - Summary
 - repo-name - Summary of unmapped repo activity
 
 ## Decisions
 - Decision text (from memory.md, dated this week)
+
 ```
 
 Rules:
