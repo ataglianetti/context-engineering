@@ -14,6 +14,20 @@ Most AI productivity systems give you templates and commands. This gives you the
 - **Identity that adapts** — `/setup` interviews you and generates a thinking partner calibrated to your domain. Not a PM-specific challenger. Not a generic assistant. Yours.
 - **Structure that navigates** — Frontmatter is a map, not decoration. Types, parents, contexts tell the AI how to traverse your vault.
 
+## Before You Start
+
+**This is an Obsidian vault** — a markdown-based personal knowledge system. You'll work in Obsidian (notes, links, daily logs), not an IDE. Claude Code is the AI layer that makes it intelligent.
+
+**`/setup` makes it yours.** The repo is scaffolding: rules, templates, hooks. When you run `/setup`, it interviews you and generates a thinking partner calibrated to your domain, context folders for your work, and memory files that persist across sessions. Ten minutes, and the generic scaffold becomes your system.
+
+**What you need installed:**
+
+- [Obsidian](https://obsidian.md/) (free) — where you read and write notes
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) — the AI layer (requires an Anthropic API key)
+- A place to run Claude Code: [Cursor](https://cursor.com/), VS Code, or your system terminal
+
+**Platform note:** macOS gets the fullest experience (calendar integration, rich clipboard). Linux and Windows work for everything else; a few commands may need adaptation.
+
 ## Quick Start
 
 ### 1. Clone
@@ -160,12 +174,6 @@ claude
 The flow: fetch upstream manifest, compare versions, diff scaffolding files, present a summary, apply with your approval. No merge conflicts, no git gymnastics.
 
 If you cloned before `/update` existed (no `manifest.json`), running `/update` detects the legacy install and establishes the baseline.
-
-## Requirements
-
-- [Obsidian](https://obsidian.md/) (free)
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) (requires Anthropic API access)
-- macOS recommended (hooks use bash, icalBuddy for calendar)
 
 ## Customization
 
