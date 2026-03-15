@@ -11,7 +11,7 @@ Read these files to understand what's already documented:
 - `.claude/rules/core/memory.md`
 - `.claude/rules/[context-1]/context.md`
 - `.claude/rules/[context-1]/collaborators.md`
-- `.claude/rules/[context-1]/portfolio.md`
+- `.claude/rules/[context-1]/portfolio.md` (if it exists)
 - `.claude/rules/[context-2]/context.md`
 - `.claude/rules/[context-2]/collaborators.md`
 
@@ -35,7 +35,7 @@ For each selected area, conduct a brief conversational interview:
 |------|-----------------|------------------|
 | How we work together | `user-profile.md` | "How has your working style evolved? Any changes to pacing, depth, or how you want me to push back?" |
 | Current priorities | `memory.md` | "What's top of mind right now? What are you actively working on, and what's blocking you?" |
-| [Context 1] context | `[context-1]/context.md`, `[context-1]/collaborators.md`, `[context-1]/portfolio.md` | "Any changes in [Context 1]? Team shifts, product updates, pressure situations?" |
+| [Context 1] context | `[context-1]/context.md`, `[context-1]/collaborators.md`, `[context-1]/portfolio.md` (if exists) | "Any changes in [Context 1]? Team shifts, product updates, pressure situations?" |
 | [Context 2] context | `[context-2]/context.md`, `[context-2]/collaborators.md` | "Any changes in [Context 2]? Team shifts, product updates, how you're navigating leadership?" |
 | Personal context | `user-profile.md`, `memory.md` | "What's happening in your personal projects? Any updates to side projects, content you're creating, or other activities?" |
 

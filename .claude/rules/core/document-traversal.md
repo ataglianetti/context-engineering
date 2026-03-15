@@ -13,7 +13,7 @@ For current state of any project or work item:
 - Check recent Calendar/ daily notes for activity
 - Look for Meeting Notes documents linked to the project
 - Find Thread notes (emails, Slack, Teams) that capture ongoing conversations
-- Use `obsidian backlinks file="X"` to find what links TO a note (vs. grepping for `[[X]]`)
+- To find what links TO a note, search for `[[Note Name]]` across vault files using the Grep tool. If Obsidian CLI is installed, `obsidian backlinks file="X"` provides more complete results including aliases.
 
 **Anti-pattern:** Inferring from filenames or folder paths when actual document content is accessible.
 

@@ -131,7 +131,8 @@ Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Featu
 │   │   └── vault-structure.md
 │   └── [context]/      # Created during /setup, loads per path
 │       ├── context.md
-│       └── collaborators.md
+│       ├── collaborators.md
+│       └── portfolio.md    # if context has portfolio items
 ├── commands/           # 17 slash commands
 ├── hooks/              # PostToolUse validation
 └── settings.json       # Hook configuration
@@ -151,6 +152,22 @@ paths:
 ```
 
 The result: focused context that changes with what you're working on, not a monolith that loads everything always.
+
+### Obsidian Sync Support
+
+During `/setup`, the `.claude/` directory is migrated to `Resources/Meta/Claude/` with a symlink back:
+
+```
+Resources/Meta/Claude/    ← actual files (visible to Obsidian, synced across devices)
+.claude -> Resources/Meta/Claude   ← symlink (Claude Code still finds everything)
+```
+
+This matters because Obsidian Sync ignores hidden folders. Without the migration, your rules, commands, and hooks are invisible to Obsidian and won't sync to other devices.
+
+**Constraints to know:**
+- Hidden folders (`.claude/`) are not synced by Obsidian Sync — the symlink pattern solves this
+- Unix file permissions are not preserved across sync — hooks use `bash script.sh` invocation, never rely on execute permission
+- Symlinks themselves are not synced — run `ln -s "Resources/Meta/Claude" .claude` once per device
 
 ## The Scaffolding/Content Split
 

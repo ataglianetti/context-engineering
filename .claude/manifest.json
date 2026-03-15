@@ -46,7 +46,10 @@
       ".claude/rules/core/user-profile.md",
       ".claude/rules/core/thinking-partner.md",
       ".claude/rules/core/memory.md",
-      ".claude/rules/core/work-state.md"
+      ".claude/rules/core/work-state.md",
+      ".claude/rules/[context]/context.md",
+      ".claude/rules/[context]/collaborators.md",
+      ".claude/rules/[context]/portfolio.md"
     ],
     "hybrid": [
       {

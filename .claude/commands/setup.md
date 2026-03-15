@@ -46,6 +46,23 @@ Before asking anything, silently check the current state:
    - `Contexts/` - if missing
    - `Calendar/` - if missing
    - `Resources/Templates/` - if missing
+   - `Resources/Frameworks/` - if missing
+   - `Resources/Reference/` - if missing
+   - `Resources/Definitions/` - if missing
+
+5. **Obsidian Sync support — symlink migration:**
+
+   Obsidian Sync ignores hidden folders (`.claude/`, `.mcp.json`). To let users edit rules from Obsidian and sync config across devices, migrate `.claude/` contents to a visible location and symlink back.
+
+   - **Skip if already a symlink:** `ls -la .claude` — if it already points to `Resources/Meta/Claude`, skip this step
+   - **Create target:** `mkdir -p Resources/Meta/Claude`
+   - **Move contents:** Move everything inside `.claude/` (rules, commands, hooks, scripts, settings.json, manifest.json, reminders.md, setup-state.json if present) to `Resources/Meta/Claude/`
+   - **Remove old directory:** `rm -rf .claude`
+   - **Create symlink:** `ln -s "Resources/Meta/Claude" .claude`
+   - **MCP symlink:** If `Resources/Meta/Claude/mcp.json` exists, create `ln -s "Resources/Meta/Claude/mcp.json" .mcp.json`
+   - **Verify:** `ls -la .claude` should show `-> Resources/Meta/Claude`
+
+   Tell the user: "I've moved your Claude config to `Resources/Meta/Claude/` so Obsidian can see and sync it. The `.claude` symlink keeps everything working."
 
 After detection, briefly tell the user what you found and what you'll be setting up.
 
@@ -137,6 +154,14 @@ Understand their current projects and responsibilities.
 - Initial portfolio items to create
 - How to structure their hierarchy (flat vs. nested)
 - Pain points the system should address
+
+**What you're also creating (per context with portfolio items):**
+- `.claude/rules/[context-name]/portfolio.md` — documents the product/initiative landscape for this context. Generated from portfolio items captured above. Include:
+  - Brief positioning for each product/initiative (what it is, who it's for)
+  - Relationships between items (parent/child, competing, complementary)
+  - Any competitive context or market positioning mentioned
+  - Add `paths:` frontmatter matching the context's path pattern
+- Skip portfolio.md for contexts with no portfolio items (e.g., a personal context with only side projects)
 
 ---
 
@@ -247,6 +272,7 @@ Once you have all the information, create the following files:
 - Update `.claude/rules/core/writing-style.md` voice calibration table with their examples
 - Create `.claude/rules/[context-name]/context.md` for each work context (with `paths:` frontmatter)
 - If multiple contexts: create `.claude/rules/[context-name]/collaborators.md` with key people patterns
+- If context has portfolio items: create `.claude/rules/[context-name]/portfolio.md` with product/initiative landscape
 
 **For Cursor/IDE:**
 - Create/update `CLAUDE.md` with all instructions inline
@@ -273,7 +299,8 @@ After generating all files, write `.claude/setup-state.json`:
     ".claude/rules/core/thinking-partner.md",
     ".claude/rules/core/writing-style.md",
     ".claude/rules/[context]/context.md",
-    ".claude/rules/[context]/collaborators.md"
+    ".claude/rules/[context]/collaborators.md",
+    ".claude/rules/[context]/portfolio.md"
   ]
 }
 ```
@@ -297,6 +324,7 @@ Setup complete! Here's what I created:
 - thinking-partner.md — [domain]-focused thinking partner
 - work-state.md — [N] projects tracked
 - [context].md — context rules for [each context]
+- portfolio.md — product/initiative landscape (if applicable)
 
 **Your commands:**
 - [N] commands installed: [list]
