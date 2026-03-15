@@ -58,7 +58,8 @@ LINKS=$(
   | grep -oE '\[\[[^]]+\]\]' \
   | sed 's/^\[\[//; s/\]\]$//' \
   | sed 's/|.*//; s/#.*//' \
-  | sort -u
+  | sort -u \
+  || true
 )
 
 # For work-state.md: also extract project names from table first column
