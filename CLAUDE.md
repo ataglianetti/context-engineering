@@ -56,12 +56,13 @@ Resources/
   Frameworks/       - Operational tools, decision models
   Reference/        - External articles, resources
   Definitions/      - Standard terms
-.claude/
-  rules/            - Modular instruction files
-    core/           - Always loaded (profile, memory, writing style)
-    vault/          - Vault-wide patterns (file management, daily notes)
-  commands/         - Slash commands
-  hooks/            - PostToolUse validation scripts
+Resources/Meta/Claude/  - System config (visible to Obsidian, synced across devices)
+  rules/                - Modular instruction files
+    core/               - Always loaded (profile, memory, writing style)
+    vault/              - Vault-wide patterns (file management, daily notes)
+  commands/             - Slash commands
+  hooks/                - PostToolUse validation scripts
+.claude -> Resources/Meta/Claude  (symlink for Claude Code compatibility)
 ```
 
 ## Architecture

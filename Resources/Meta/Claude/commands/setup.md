@@ -50,19 +50,12 @@ Before asking anything, silently check the current state:
    - `Resources/Reference/` - if missing
    - `Resources/Definitions/` - if missing
 
-5. **Obsidian Sync support — symlink migration:**
-
-   Obsidian Sync ignores hidden folders (`.claude/`, `.mcp.json`). To let users edit rules from Obsidian and sync config across devices, migrate `.claude/` contents to a visible location and symlink back.
-
-   - **Skip if already a symlink:** `ls -la .claude` — if it already points to `Resources/Meta/Claude`, skip this step
-   - **Create target:** `mkdir -p Resources/Meta/Claude`
-   - **Move contents:** Move everything inside `.claude/` (rules, commands, hooks, scripts, settings.json, manifest.json, reminders.md, setup-state.json if present) to `Resources/Meta/Claude/`
-   - **Remove old directory:** `rm -rf .claude`
-   - **Create symlink:** `ln -s "Resources/Meta/Claude" .claude`
-   - **MCP symlink:** If `Resources/Meta/Claude/mcp.json` exists, create `ln -s "Resources/Meta/Claude/mcp.json" .mcp.json`
-   - **Verify:** `ls -la .claude` should show `-> Resources/Meta/Claude`
-
-   Tell the user: "I've moved your Claude config to `Resources/Meta/Claude/` so Obsidian can see and sync it. The `.claude` symlink keeps everything working."
+5. **Verify symlink** (silently):
+   - `ls -la .claude` — should show `-> Resources/Meta/Claude`
+   - If `.claude` is a real directory (not a symlink): migrate contents to `Resources/Meta/Claude/`, remove directory, create symlink `ln -s "Resources/Meta/Claude" .claude`
+   - If `.claude` doesn't exist: create symlink `ln -s "Resources/Meta/Claude" .claude`
+   - If symlink exists and points correctly: skip
+   - **MCP symlink:** If `Resources/Meta/Claude/mcp.json` exists and `.mcp.json` doesn't: `ln -s "Resources/Meta/Claude/mcp.json" .mcp.json`
 
 After detection, briefly tell the user what you found and what you'll be setting up.
 

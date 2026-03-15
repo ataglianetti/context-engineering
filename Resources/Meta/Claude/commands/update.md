@@ -25,13 +25,13 @@ Determine fetch method:
 **Git-based install** (`.git/` directory exists with `origin` remote):
 ```bash
 git fetch origin main
-git show origin/main:.claude/manifest.json
+git show origin/main:Resources/Meta/Claude/manifest.json
 ```
 
 **Zip/manual install** (no `.git/`):
 ```bash
 # Fetch from GitHub raw content
-curl -s https://raw.githubusercontent.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\(.*\)\.git/\1/' | sed 's/.*github.com[:/]\(.*\)/\1/')/main/.claude/manifest.json
+curl -s https://raw.githubusercontent.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\(.*\)\.git/\1/' | sed 's/.*github.com[:/]\(.*\)/\1/')/main/Resources/Meta/Claude/manifest.json
 ```
 
 Read the upstream manifest. Compare `version` fields.

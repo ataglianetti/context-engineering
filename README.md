@@ -111,9 +111,9 @@ Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Featu
 ## Architecture
 
 ```
-.claude/
+Resources/Meta/Claude/       ← actual files (visible to Obsidian, synced)
 ├── rules/
-│   ├── core/           # Always loaded (~3K tokens)
+│   ├── core/                # Always loaded (~3K tokens)
 │   │   ├── hard-walls.md
 │   │   ├── user-profile.md
 │   │   ├── thinking-partner.md
@@ -123,19 +123,21 @@ Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Featu
 │   │   ├── writing-style.md
 │   │   ├── document-traversal.md
 │   │   └── intent-interpretation.md
-│   ├── vault/          # Vault-wide patterns
+│   ├── vault/               # Vault-wide patterns
 │   │   ├── file-management.md
 │   │   ├── daily-notes.md
 │   │   ├── summarization.md
 │   │   ├── clipboard.md
 │   │   └── vault-structure.md
-│   └── [context]/      # Created during /setup, loads per path
+│   └── [context]/           # Created during /setup, loads per path
 │       ├── context.md
 │       ├── collaborators.md
-│       └── portfolio.md    # if context has portfolio items
-├── commands/           # 17 slash commands
-├── hooks/              # PostToolUse validation
-└── settings.json       # Hook configuration
+│       └── portfolio.md     # if context has portfolio items
+├── commands/                # 17 slash commands
+├── hooks/                   # PostToolUse validation
+└── settings.json            # Hook configuration
+
+.claude -> Resources/Meta/Claude   ← symlink (Claude Code finds everything here)
 ```
 
 **Core** loads every session. Your profile, memory, constraints, session mechanics. About 3K tokens.
@@ -155,19 +157,13 @@ The result: focused context that changes with what you're working on, not a mono
 
 ### Obsidian Sync Support
 
-During `/setup`, the `.claude/` directory is migrated to `Resources/Meta/Claude/` with a symlink back:
+All config lives at `Resources/Meta/Claude/` — a visible path that Obsidian can see, edit, and sync. The `.claude` symlink at the repo root points there so Claude Code finds everything automatically.
 
-```
-Resources/Meta/Claude/    ← actual files (visible to Obsidian, synced across devices)
-.claude -> Resources/Meta/Claude   ← symlink (Claude Code still finds everything)
-```
-
-This matters because Obsidian Sync ignores hidden folders. Without the migration, your rules, commands, and hooks are invisible to Obsidian and won't sync to other devices.
+Obsidian Sync ignores hidden folders, so putting config in `.claude/` directly would make it invisible across devices. The symlink pattern avoids this.
 
 **Constraints to know:**
-- Hidden folders (`.claude/`) are not synced by Obsidian Sync — the symlink pattern solves this
 - Unix file permissions are not preserved across sync — hooks use `bash script.sh` invocation, never rely on execute permission
-- Symlinks themselves are not synced — run `ln -s "Resources/Meta/Claude" .claude` once per device
+- Symlinks are not synced — run `ln -s "Resources/Meta/Claude" .claude` once per new device
 
 ## The Scaffolding/Content Split
 
