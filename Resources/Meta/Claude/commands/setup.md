@@ -323,10 +323,31 @@ Setup complete! Here's what I created:
 - [N] commands installed: [list]
 - [N] hooks active: frontmatter validation, date validation, wikilink checking
 
-**Try these first:**
-- `/today` — morning briefing
-- `/first-light` — morning journal
-- `/daily-note` — end-of-day log
+**What to expect:**
+- `/today` works right away — it reads the project status I just
+  populated. Calendar and daily note history build over time.
+- Meeting notes accept any input: rough bullets, dictated recap,
+  pasted chat, or transcription tool output. Just tell it who
+  was there.
+- The vault compounds over time. First week is about building
+  the habit. By week 2-3, daily notes reference meeting notes
+  that reference people that link to projects.
+
+**Your first real test:**
+After your next meeting, run `/meeting-notes` and paste whatever
+you captured — even a brain dump works. Or save a Slack/Teams/email
+thread with `/save-thread`. Either one seeds the vault with real
+context that everything else builds on.
+
+**Commands available:**
+- `/today` — morning briefing (projects, milestones, reminders)
+- `/meeting-notes` — turn any rough notes into a structured record
+- `/first-light` / `/last-light` — morning and evening journal
+- `/daily-note` — end-of-day activity log
+- `/save-thread` — capture a conversation worth keeping
+- `/draft-reply` — draft a response with full context
+- `/project-status` — status update across a context
+- `/research` — deep research with web search, saved to vault
 ```
 
 ---
