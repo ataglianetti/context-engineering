@@ -108,6 +108,28 @@ Answer the questions. Claude creates your context folders, people directory, por
 
 Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Feature, Daily Note, Weekly Note, MOC, Definition, Reference, Post, Framework, and more.
 
+## Using It
+
+After `/setup`, your vault has contexts, people, projects, and rules. Here's how the pieces fit into a daily workflow.
+
+**Morning:** Run `/today` for a briefing — today's meetings, upcoming milestones, any reminders that triggered. Use `/first-light` if you journal.
+
+**During the day:** Work happens in Obsidian and Claude Code together. When you take a meeting, paste your rough notes and run `/meeting-notes` — Claude formats them, resolves people against your directory, and files them in `Calendar/`. Save an important email or Slack thread with `/save-thread`. Need to reply? `/draft-reply` pulls context from the person's note and prior threads.
+
+**End of day:** Run `/daily-note` to generate a log of what happened — vault activity, git commits across your repos, meetings processed. The daily note lives in `Calendar/` and becomes the raw material for `/weekly-note` summaries.
+
+**Closing a session:** Say "done" or "wrapping up" and Claude updates your work state (where you left off on each project) and memory (decisions made, threads opened). Tomorrow's session picks up where you left off.
+
+### Why the vault is structured this way
+
+**`Contexts/`** separates your organizational worlds. Each context gets its own people, portfolio, and rules. Working on a file in `Contexts/Acme Corp/` loads Acme-specific rules automatically — your collaborators, org dynamics, product landscape. Switch to `Contexts/Personal/` and different rules load.
+
+**`Calendar/`** is the timeline layer. Daily notes, meeting notes, and threads all live here. They're the raw history that weekly and monthly summaries synthesize from.
+
+**`Resources/`** holds reusable reference material — templates for note types, frameworks you apply across contexts, external articles you've saved, and standard definitions.
+
+**Frontmatter** (the YAML header on every note) isn't decoration — it's how Claude navigates. `type:` tells it what kind of note this is. `context:` links it to an organization. `parent:` connects it to a project. When you ask about a project, Claude follows these links to find related meetings, threads, and documents without you pointing it there.
+
 ## Architecture
 
 ```
@@ -212,5 +234,3 @@ Both papers independently confirm: self-generated context is flat or harmful, co
 ## Credits
 
 Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) by Anthropic.
-
-Context engineering principles from Aakash Gupta's "Context Engineering for PMs" — the framework alignment (Triple-I, 5-P, Two-Wall, N.O.W.) informed the rules architecture.
