@@ -23,8 +23,9 @@ case "$BASENAME" in
   *) exit 0 ;;
 esac
 
-# Skip rules directory (these are rules files, not vault notes)
+# Skip rules directory — but allow memory.md and work-state.md through
 case "$FILE_PATH" in
+  */rules/core/memory.md | */rules/core/work-state.md) ;; # allow through
   */.claude/* | */Resources/Meta/Claude/*)
     echo "$(date '+%H:%M:%S') validate-dates: rules path — skipped ($BASENAME)" >> "$LOG"
     exit 0 ;;
