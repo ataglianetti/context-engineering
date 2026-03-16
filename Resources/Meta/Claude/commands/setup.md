@@ -247,7 +247,10 @@ Interview to determine which commands to install and how to configure the system
 
 Once you have all the information, create the following files.
 
-**Fidelity rule:** Only use information the user provided. Do not invent dates, milestones, timelines, metrics, or project details that weren't stated. If the user said "18 month timeline, 10 months in" — that's context for work-state, not an invitation to calculate milestone dates. When a field expects a date or number and none was given, leave it blank or omit it.
+**Fidelity rule:** Only use information the user provided. Do not invent dates, milestones, timelines, metrics, or project details that weren't stated. Specific violations to avoid:
+- **No fabricated dates.** If the user said "18 month timeline, 10 months in" — that's context for work-state, not an invitation to calculate milestone dates. Do not create `## Status` tables with projected dates. Do not populate `milestone:` or `milestone-date:` frontmatter.
+- **No inferred structure.** session-protocol.md describes Status tables and milestone fields — those are for *ongoing use*, not for setup. Portfolio notes at setup time are stubs, not fully-formed tracking documents.
+- When a field expects a date or number and none was given, leave it blank or omit it.
 
 ### Always Create (Obsidian vault structure):
 
@@ -265,6 +268,7 @@ Once you have all the information, create the following files.
    - Create folder: `Contexts/[Context Name]/Portfolio/[Project Name]/`
    - Create folder note: `[Project Name].md` with appropriate type (Initiative, Product, etc.)
    - Create `Documents/` subfolder
+   - **Portfolio notes are minimal at setup.** Frontmatter only — use the template fields (type, context, status). Do NOT add `milestone:` or `milestone-date:` (these emerge from real work, not interviews). Do NOT create a `## Status` table. A 1-2 sentence description in the body is fine if the user provided one. Nothing more.
 
 ### Claude Instructions (varies by interface):
 
