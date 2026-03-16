@@ -245,7 +245,9 @@ Interview to determine which commands to install and how to configure the system
 
 ## After All Phases: Generate Files
 
-Once you have all the information, create the following files:
+Once you have all the information, create the following files.
+
+**Fidelity rule:** Only use information the user provided. Do not invent dates, milestones, timelines, metrics, or project details that weren't stated. If the user said "18 month timeline, 10 months in" — that's context for work-state, not an invitation to calculate milestone dates. When a field expects a date or number and none was given, leave it blank or omit it.
 
 ### Always Create (Obsidian vault structure):
 
@@ -267,12 +269,12 @@ Once you have all the information, create the following files:
 ### Claude Instructions (varies by interface):
 
 **For Claude Code:**
-- Update `.claude/rules/core/user-profile.md` with gathered info
+- Update `.claude/rules/core/user-profile.md` with gathered info. Include a `## Environment` section with tools (Slack, Teams, etc.), meeting cadence, typical weekly rhythm, and code repo paths from Phase 6. This is the only home for workflow context — if it's not here, it's lost.
 - **Generate** `.claude/rules/core/thinking-partner.md` from Phase 5 answers (not fill-in-the-blanks — write it as a complete, coherent rule file)
 - Update `.claude/rules/core/work-state.md` with initial project rows from Phase 4
 - Update `.claude/rules/core/writing-style.md` voice calibration table with their examples
 - Create `.claude/rules/[context-name]/context.md` for each work context (with `paths:` frontmatter)
-- If multiple contexts: create `.claude/rules/[context-name]/collaborators.md` with key people patterns
+- Create `.claude/rules/[context-name]/collaborators.md` with key people patterns for each context — even single-context users need a navigable collaborator overview beyond individual person notes
 - If context has portfolio items: create `.claude/rules/[context-name]/portfolio.md` with product/initiative landscape
 
 **For Cursor/IDE:**
