@@ -57,7 +57,15 @@ Before asking anything, silently check the current state:
    - If symlink exists and points correctly: skip
    - **MCP symlink:** If `Resources/Meta/Claude/mcp.json` exists and `.mcp.json` doesn't: `ln -s "Resources/Meta/Claude/mcp.json" .mcp.json`
 
-After detection, briefly tell the user what you found and what you'll be setting up.
+6. **Name the vault:**
+   - The default folder name is `context-management-starter-kit` — not a great name for a personal vault.
+   - Ask: "What do you want to call your vault? This becomes the folder name and what Obsidian shows in the vault switcher. Most people use something simple — 'My Vault', 'Notes', their name, etc."
+   - If the current folder name is already personalized (not `context-management-starter-kit`), skip this step.
+   - Rename the folder: `mv "$CLAUDE_PROJECT_DIR" "$parent_dir/$new_name"` and `cd` into it.
+   - Update the Obsidian vault name in `.obsidian/app.json` if it exists.
+   - **Important:** After renaming, all subsequent file operations use the new path. Store the new path and use it for the rest of setup.
+
+After detection and naming, briefly tell the user what you found and what you'll be setting up.
 
 ---
 
