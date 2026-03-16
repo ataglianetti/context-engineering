@@ -270,6 +270,11 @@ Once you have all the information, create the following files.
    - Create `Documents/` subfolder
    - **Portfolio notes are minimal at setup.** Frontmatter only — use the template fields (type, context, status). Do NOT add `milestone:` or `milestone-date:` (these emerge from real work, not interviews). Do NOT create a `## Status` table. A 1-2 sentence description in the body is fine if the user provided one. Nothing more.
 
+4. **Context-specific rules** for each work context (create these files — they do NOT exist yet):
+   - `.claude/rules/[context-name]/context.md` — with `paths:` frontmatter matching `Contexts/[Context Name]/**`. Include org structure, key dynamics, and decision patterns from Phase 2 answers in the body — this is the operational context that initiative and person notes link back to, so don't leave it empty.
+   - `.claude/rules/[context-name]/collaborators.md` — a navigable collaborator overview that complements the individual Person notes. Structure by team or role group (Leadership, Team, Stakeholders, etc.) using tables with Person, Role, and Relationship columns. Include a "Proactive Suggestions" section with context-specific behavioral guidance and a "Document Patterns" section describing how Claude should help with this context's artifacts. Even single-context users need this cross-cutting view — it's how Claude quickly loads stakeholder dynamics without reading every Person note.
+   - `.claude/rules/[context-name]/portfolio.md` (only if context has portfolio items) — documents the product/initiative landscape with positioning, relationships between items, and competitive context.
+
 ### Claude Instructions (varies by interface):
 
 **For Claude Code:**
@@ -277,9 +282,7 @@ Once you have all the information, create the following files.
 - **Generate** `.claude/rules/core/thinking-partner.md` from Phase 5 answers (not fill-in-the-blanks — write it as a complete, coherent rule file)
 - Update `.claude/rules/core/work-state.md` with initial project rows from Phase 4
 - Update `.claude/rules/core/writing-style.md` voice calibration table with their examples
-- Create `.claude/rules/[context-name]/context.md` for each work context (with `paths:` frontmatter)
-- Create `.claude/rules/[context-name]/collaborators.md` with key people patterns for each context — even single-context users need a navigable collaborator overview beyond individual person notes
-- If context has portfolio items: create `.claude/rules/[context-name]/portfolio.md` with product/initiative landscape
+  When generating anti-tells, derive them from the user's stated communication preferences and domain — not from generic AI writing advice. A data scientist who values precision needs different anti-tells than a consultant who values brevity. Generic patterns (em-dash density, diplomatic sandwich) should only appear if they specifically undermine this user's credibility in their domain.
 
 **For Cursor/IDE:**
 - Create/update `CLAUDE.md` with all instructions inline
