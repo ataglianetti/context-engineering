@@ -231,6 +231,10 @@ Two 2026 papers provide empirical support for the modular, human-curated archite
 
 Both papers independently confirm: self-generated context is flat or harmful, comprehensive documentation degrades performance, and the value comes from human judgment about what to include and what to leave out.
 
+## Support
+
+If this has been useful, [buy me a coffee](https://buymeacoffee.com/ataglianetti).
+
 ## Credits
 
 Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) by Anthropic.
