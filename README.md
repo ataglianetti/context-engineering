@@ -234,7 +234,3 @@ Both papers independently confirm: self-generated context is flat or harmful, co
 ## Support
 
 If this has been useful, [buy me a coffee](https://buymeacoffee.com/ataglianetti).
-
-## Credits
-
-Built with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) by Anthropic.
