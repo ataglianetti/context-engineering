@@ -1,6 +1,9 @@
 <%*
+// Check if this is a new file or inserting into existing file
+// tp.config.run_mode: 0 = CreateNewFromTemplate, 1 = AppendActiveFile (insertion)
 const isNewFile = tp.config.run_mode === 0;
 
+// If inserting into existing file, just output basic frontmatter and exit
 if (!isNewFile) {
 -%>---
 type: Meeting Series
@@ -30,56 +33,56 @@ if (!meetingName) {
   return;
 }
 
-// Step 2: Find and select context dynamically
-const allFiles = app.vault.getMarkdownFiles();
-const contexts = [];
-
-for (const file of allFiles) {
-  if (!file.path.startsWith("Contexts/")) continue;
-  const cache = app.metadataCache.getFileCache(file);
-  if (cache && cache.frontmatter && cache.frontmatter.type === "Context") {
-    contexts.push(file.basename);
-  }
-}
-
-let selectedContext;
-if (contexts.length === 0) {
-  new Notice("No contexts found. Run /setup first.", 5000);
+// Step 2: Select Context
+const contextOptions = ["APM Music", "Yamaha Guitar Group"];
+const selectedContext = await tp.system.suggester(contextOptions, contextOptions);
+if (!selectedContext) {
   await app.vault.delete(tp.file.find_tfile(tp.file.title));
   return;
-} else if (contexts.length === 1) {
-  selectedContext = contexts[0];
-} else {
-  selectedContext = await tp.system.suggester(contexts, contexts);
-  if (!selectedContext) {
-    await app.vault.delete(tp.file.find_tfile(tp.file.title));
-    return;
-  }
 }
 
 // Step 3: Select Parent Project (filtered by context)
 const projectTypes = ["Product", "Platform", "Initiative", "Feature"];
+const allFiles = app.vault.getMarkdownFiles();
 const projectOptions = [];
 const projectValues = [];
 
 for (const file of allFiles) {
+  // Filter by context folder path
   if (!file.path.includes(`Contexts/${selectedContext}/`)) continue;
 
   const cache = app.metadataCache.getFileCache(file);
   if (cache && cache.frontmatter) {
     const type = cache.frontmatter.type;
+    const aliases = cache.frontmatter.aliases;
+
+    // Check if type matches project types
     const isProjectType = type && projectTypes.includes(type);
+
+    // Check if file is not archived
     const isNotArchived = cache.frontmatter.archive !== true;
 
     if (isProjectType && isNotArchived) {
-      projectOptions.push(file.basename);
+      const displayName = aliases && aliases.length > 0
+        ? `${aliases[0]} - ${file.basename}`
+        : file.basename;
+      projectOptions.push(displayName);
       projectValues.push(file.basename);
     }
   }
 }
 
-projectOptions.sort();
-projectValues.sort();
+// Sort alphabetically
+const sortedProjects = projectOptions.map((opt, i) => ({opt, val: projectValues[i]}))
+  .sort((a, b) => a.opt.localeCompare(b.opt));
+projectOptions.length = 0;
+projectValues.length = 0;
+sortedProjects.forEach(({opt, val}) => {
+  projectOptions.push(opt);
+  projectValues.push(val);
+});
+
+// Add "None" option
 projectOptions.unshift("(No parent project)");
 projectValues.unshift("");
 
@@ -93,15 +96,20 @@ if (selectedProject === undefined) {
 const people = [];
 
 for (const file of allFiles) {
+  // Filter by context folder path
   if (!file.path.includes(`Contexts/${selectedContext}/People/`)) continue;
 
   const cache = app.metadataCache.getFileCache(file);
   if (cache && cache.frontmatter) {
     const type = cache.frontmatter.type;
+
+    // Check for "Person" or "person", handle both string and array
     const isPerson = type && (
       type.toLowerCase() === "person" ||
       (Array.isArray(type) && type.some(t => t.toLowerCase() === "person"))
     );
+
+    // Check if file is not archived
     const isNotArchived = cache.frontmatter.archive !== true;
 
     if (isPerson && isNotArchived) {
@@ -110,8 +118,10 @@ for (const file of allFiles) {
   }
 }
 
+// Sort alphabetically
 people.sort();
 
+// Multi-select attendees loop
 const selectedWith = [];
 let selecting = true;
 
@@ -165,6 +175,7 @@ frontmatter += 'created: ' + tp.date.now("YYYY-MM-DD") + '\n';
 frontmatter += 'modified:\n';
 frontmatter += '---';
 
+// Output the frontmatter
 tR = frontmatter + '\n\n# ' + meetingName;
 %>
 
@@ -188,6 +199,7 @@ LIMIT 20
 ```
 
 <%*
+// Rename and move file to Calendar folder
 const targetFileName = meetingName;
 const existingFile = tp.file.find_tfile(targetFileName);
 

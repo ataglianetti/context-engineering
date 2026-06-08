@@ -16,6 +16,10 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [[ -z "$FILE_PATH" ]] && { echo "$(date '+%H:%M:%S') validate-frontmatter: no file path or not .md — skipped" >> "$LOG"; exit 0; }
 [[ "$FILE_PATH" != *.md ]] && { echo "$(date '+%H:%M:%S') validate-frontmatter: not .md — skipped ($FILE_PATH)" >> "$LOG"; exit 0; }
 
+# Only validate files inside the vault
+VAULT_DIR="$CLAUDE_PROJECT_DIR"
+[[ "$FILE_PATH" != "$VAULT_DIR"/* ]] && { echo "$(date '+%H:%M:%S') validate-frontmatter: outside vault — skipped ($FILE_PATH)" >> "$LOG"; exit 0; }
+
 BASENAME=$(basename "$FILE_PATH")
 echo "$(date '+%H:%M:%S') validate-frontmatter: checking $BASENAME" >> "$LOG"
 
@@ -85,6 +89,24 @@ if echo "$TYPE_VALUE" | grep -qE "^($CONTEXT_TYPES)$"; then
     jq -n '{
       decision: "block",
       reason: "The `context:` value must be a wikilink (e.g., `context: \"[[Organization Name]]\"`). Plain text context references break the vault graph."
+    }'
+    exit 0
+  fi
+fi
+
+# Types that require H1 heading after frontmatter
+H1_TYPES="Document|Meeting|Person|Thread"
+
+if echo "$TYPE_VALUE" | grep -qE "^($H1_TYPES)$"; then
+  # Find first non-empty line after frontmatter closing ---
+  AFTER_FM=$(awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2 && /[^ \t]/{print; exit}' "$FILE_PATH")
+
+  if [[ "$AFTER_FM" != "# "* ]]; then
+    echo "$(date '+%H:%M:%S') validate-frontmatter: BLOCKING — missing H1 for type '$TYPE_VALUE' ($BASENAME)" >> "$LOG"
+    FILENAME_NO_EXT="${BASENAME%.md}"
+    jq -n --arg type "$TYPE_VALUE" --arg name "$FILENAME_NO_EXT" '{
+      decision: "block",
+      reason: ("Type \"" + $type + "\" requires an H1 heading (# ) as the first content after frontmatter. Add: # " + $name)
     }'
     exit 0
   fi

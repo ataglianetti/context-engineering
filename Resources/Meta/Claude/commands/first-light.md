@@ -4,6 +4,8 @@ description: Morning journal entry - prompts for input, cleans up dictation whil
 
 Morning reflection for the daily note's First Light section.
 
+If a `Current local time:` line is present (UserPromptSubmit hook), let it shape the opener — an early-morning start reads differently from a late one, and if it's clearly evening, gently check whether `/last-light` was intended before writing into First Light.
+
 **1. Find today's daily note**
 - Path: `Calendar/YYYY-MM-DD.md` (current date)
 - If it doesn't exist, create it using `Resources/Templates/Daily Note.md`
@@ -58,7 +60,7 @@ Do NOT:
 - Reorder their thoughts
 - Make it sound "professional" or polished
 - Add insights or reflections they didn't express
-- Use em-dashes (stream-of-consciousness text doesn't use them naturally -- they read as AI cleanup)
+- Use em-dashes (stream-of-consciousness text doesn't use them naturally — they read as AI cleanup)
 
 **5. Show the cleaned version**
 
@@ -70,12 +72,12 @@ If they edit, incorporate changes. If they approve, proceed.
 
 If `### First Light` section exists, append to it.
 
-If it doesn't exist, insert it immediately BEFORE `### Log`:
+If it doesn't exist, insert it immediately BEFORE `## Log`:
 ```markdown
-### First Light
+## First Light
 [cleaned content here]
 
-### Log
+## Log
 ```
 
 Write the cleaned text as bullet points or short paragraphs (match their natural groupings).

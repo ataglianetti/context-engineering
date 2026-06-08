@@ -1,6 +1,9 @@
 <%*
+// Check if this is a new file or inserting into existing file
+// tp.config.run_mode: 0 = CreateNewFromTemplate, 1 = AppendActiveFile (insertion)
 const isNewFile = tp.config.run_mode === 0;
 
+// If inserting into existing file, just output basic frontmatter and exit
 if (!isNewFile) {
 -%>---
 type: Thread
@@ -8,10 +11,12 @@ context:
 about:
 with:
 one-liner:
+related:
 aliases:
 created: <% tp.date.now("YYYY-MM-DD") %>
 tags:
 modified:
+cssclasses:
 ---
 
 <%* } -%>
@@ -37,11 +42,13 @@ frontmatter += 'context:\n';
 frontmatter += 'about:\n';
 frontmatter += 'with:\n';
 frontmatter += 'one-liner:\n';
+frontmatter += 'related:\n';
 frontmatter += 'aliases:\n';
 frontmatter += '  - "' + threadName + '"\n';
 frontmatter += 'created: ' + tp.date.now("YYYY-MM-DD") + '\n';
 frontmatter += 'tags:\n';
 frontmatter += 'modified:\n';
+frontmatter += 'cssclasses:\n';
 frontmatter += '---';
 
 tR = frontmatter + '\n\n# ' + threadName;

@@ -1,5 +1,6 @@
 <%*
 // Check if this is a new file or inserting into existing file
+// tp.config.run_mode: 0 = CreateNewFromTemplate, 1 = AppendActiveFile (insertion)
 const isNewFile = tp.config.run_mode === 0;
 
 // If inserting into existing file, just output basic frontmatter and exit
@@ -11,8 +12,10 @@ about:
 with:
 aliases:
 one-liner:
+related:
 created: <% tp.date.now("YYYY-MM-DD") %>
 modified:
+cssclasses:
 ---
 
 ## Notes
@@ -32,6 +35,7 @@ const todayDate = tp.date.now("YYYY-MM-DD");
 const dateOptions = [];
 const dateValues = [];
 
+// Generate date options for the next 14 days
 for (let i = 0; i < 14; i++) {
   const date = moment().add(i, 'days');
   const dateStr = date.format("YYYY-MM-DD");
@@ -47,6 +51,7 @@ for (let i = 0; i < 14; i++) {
   dateValues.push(dateStr);
 }
 
+// Add custom date option
 dateOptions.push("Custom date...");
 dateValues.push("custom");
 
@@ -57,6 +62,7 @@ if (!selectedDate) {
 }
 
 let finalDate;
+
 if (selectedDate === "custom") {
   finalDate = await tp.system.prompt("Enter custom date (YYYY-MM-DD)", todayDate);
   if (!finalDate) {
@@ -67,50 +73,38 @@ if (selectedDate === "custom") {
   finalDate = selectedDate;
 }
 
-// Step 3: Find available contexts dynamically
+// Step 3: Select Context (APM Music | Yamaha Guitar Group | None)
+const contextOptions = ["APM Music", "Yamaha Guitar Group", "None"];
+const selectedContext = await tp.system.suggester(contextOptions, contextOptions);
+if (!selectedContext) {
+  await app.vault.delete(tp.file.find_tfile(tp.file.title));
+  return;
+}
+
+// Step 4: Multi-select Attendees (filtered by context if context selected)
 const allFiles = app.vault.getMarkdownFiles();
-const contexts = [];
-
-for (const file of allFiles) {
-  if (!file.path.startsWith("Contexts/")) continue;
-  const cache = app.metadataCache.getFileCache(file);
-  if (cache && cache.frontmatter && cache.frontmatter.type === "Context") {
-    contexts.push(file.basename);
-  }
-}
-
-// Select context (or None if multiple contexts exist)
-let selectedContext = null;
-if (contexts.length === 0) {
-  // No contexts defined yet
-  selectedContext = null;
-} else if (contexts.length === 1) {
-  // Auto-select single context
-  selectedContext = contexts[0];
-} else {
-  // Multiple contexts - let user choose
-  const contextOptions = [...contexts, "None"];
-  selectedContext = await tp.system.suggester(contextOptions, contextOptions);
-  if (selectedContext === "None") selectedContext = null;
-}
-
-// Step 4: Multi-select Attendees (filtered by context if selected)
 const people = [];
 
 for (const file of allFiles) {
-  if (selectedContext) {
+  // Filter by context folder path if context is selected
+  if (selectedContext !== "None") {
     if (!file.path.includes(`Contexts/${selectedContext}/People/`)) continue;
   } else {
-    if (!file.path.includes("/People/")) continue;
+    // If no context, include all people from both contexts
+    if (!file.path.includes("Contexts/") || !file.path.includes("/People/")) continue;
   }
 
   const cache = app.metadataCache.getFileCache(file);
   if (cache && cache.frontmatter) {
     const type = cache.frontmatter.type;
+
+    // Check for "Person" or "person", handle both string and array
     const isPerson = type && (
       type.toLowerCase() === "person" ||
       (Array.isArray(type) && type.some(t => t.toLowerCase() === "person"))
     );
+
+    // Check if file is not archived
     const isNotArchived = cache.frontmatter.archive !== true;
 
     if (isPerson && isNotArchived) {
@@ -119,8 +113,10 @@ for (const file of allFiles) {
   }
 }
 
+// Sort alphabetically
 people.sort();
 
+// Multi-select attendees loop
 const selectedWith = [];
 let selecting = true;
 
@@ -142,7 +138,7 @@ while (selecting && people.length > 0) {
 let frontmatter = '---\n';
 frontmatter += 'type: Meeting\n';
 
-if (selectedContext) {
+if (selectedContext !== "None") {
   frontmatter += 'context: "[[' + selectedContext + ']]"\n';
 } else {
   frontmatter += 'context:\n';
@@ -163,8 +159,10 @@ if (selectedWith.length > 0) {
 frontmatter += 'aliases:\n';
 frontmatter += '  - "' + meetingTitle + '"\n';
 frontmatter += 'one-liner:\n';
+frontmatter += 'related:\n';
 frontmatter += 'created: ' + tp.date.now("YYYY-MM-DD") + '\n';
 frontmatter += 'modified:\n';
+frontmatter += 'cssclasses:\n';
 frontmatter += '---';
 
 const formattedDate = moment(finalDate).format("MMMM Do, YYYY");
@@ -175,6 +173,7 @@ tR = frontmatter + '\n\n# ' + meetingTitle + '\n[[' + finalDate + '|' + formatte
 - <% tp.file.cursor(1) %>
 
 <%*
+// Move file to Calendar folder with date prefix
 if (meetingTitle) {
   const targetFileName = finalDate + " " + meetingTitle;
   const existingFile = tp.file.find_tfile(targetFileName);

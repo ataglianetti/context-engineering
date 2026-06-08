@@ -16,7 +16,7 @@ Generate a weekly summary synthesizing daily note logs into a consolidated view.
 **2. Read daily notes**
 
 For each daily note in the target week:
-- Read the `### Log` section
+- Read the `## Log` section
 - Extract project groupings and their nested items
 - Track all projects mentioned across the week
 

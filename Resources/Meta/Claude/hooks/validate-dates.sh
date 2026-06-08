@@ -23,9 +23,8 @@ case "$BASENAME" in
   *) exit 0 ;;
 esac
 
-# Skip rules directory — but allow memory.md and work-state.md through
+# Skip rules directory (these are rules files, not vault notes)
 case "$FILE_PATH" in
-  */rules/core/memory.md | */rules/core/work-state.md) ;; # allow through
   */.claude/* | */Resources/Meta/Claude/*)
     echo "$(date '+%H:%M:%S') validate-dates: rules path — skipped ($BASENAME)" >> "$LOG"
     exit 0 ;;
@@ -37,14 +36,21 @@ esac
 TODAY=$(date +%Y-%m-%d)
 
 if [[ "$BASENAME" == "work-state.md" ]]; then
-  # Check "Last Session" date line: ## Last Session\n- **Date:** YYYY-MM-DD
-  LAST_SESSION=$(grep -A1 '## Last Session' "$FILE_PATH" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
-  echo "$(date '+%H:%M:%S') validate-dates: work-state.md LAST_SESSION=$LAST_SESSION TODAY=$TODAY" >> "$LOG"
-  if [[ -n "$LAST_SESSION" && "$LAST_SESSION" != "$TODAY" ]]; then
-    echo "$(date '+%H:%M:%S') validate-dates: BLOCKING — date mismatch" >> "$LOG"
-    jq -n --arg written "$LAST_SESSION" --arg actual "$TODAY" '{
+  # Per-context inline format: **Last Session (YYYY-MM-DD):** (one line per context).
+  # The 2026-04-23 restructure replaced the old single "## Last Session" heading with
+  # these inline lines. Only contexts touched this session get stamped today; others
+  # legitimately stay in the past, and work-state is also edited mid-session — so we
+  # cannot require any line to equal today without constant false positives. The one
+  # unambiguous error (an inferred/fabricated date) is a date in the FUTURE.
+  FUTURE_DATE=$(grep -oE 'Last Session \([0-9]{4}-[0-9]{2}-[0-9]{2}\)' "$FILE_PATH" \
+    | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' \
+    | awk -v today="$TODAY" '$0 > today {print; exit}' || true)
+  echo "$(date '+%H:%M:%S') validate-dates: work-state.md FUTURE_DATE=${FUTURE_DATE:-none} TODAY=$TODAY" >> "$LOG"
+  if [[ -n "$FUTURE_DATE" ]]; then
+    echo "$(date '+%H:%M:%S') validate-dates: BLOCKING — future Last Session date" >> "$LOG"
+    jq -n --arg written "$FUTURE_DATE" --arg actual "$TODAY" '{
       decision: "block",
-      reason: ("Last Session date is " + $written + ", but today is " + $actual + ". Use the system-provided currentDate.")
+      reason: ("A Last Session date is " + $written + ", which is in the future (today is " + $actual + "). Use the system-provided currentDate, not an inferred date.")
     }'
     exit 0
   fi

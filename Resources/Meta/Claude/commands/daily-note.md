@@ -30,8 +30,9 @@ The target date flows through all steps below. When invoked by `/today` catch-up
 - **Sanity check:** If search returns zero results and target date is today, verify the query date matches the system date before assuming no notes exist. Zero Calendar notes on a workday warrants a second look.
 
 **Contexts/ folder** (git-tracked):
-- If target date is today: run `git status` and `git diff` for uncommitted changes, plus `git log --since="midnight"` for today's commits
-- If target date is in the past: run `git log --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day"` to find commits from that date. No `git status`/`git diff` (uncommitted changes can't be attributed to past dates).
+- If target date is today: run `git status` and `git diff` for uncommitted changes, plus `git log --after="YYYY-MM-DD 00:00"` for today's commits
+- If target date is in the past: run `git log --after="YYYY-MM-DD 00:00" --before="YYYY-MM-DD+1day 00:00"` to find commits from that date. No `git status`/`git diff` (uncommitted changes can't be attributed to past dates).
+- **Always use `--after`/`--before` with explicit `HH:MM` times.** Git's `--since`/`--until` use `approxidate` (fuzzy parsing), which leaks commits across day boundaries. Bare dates like `--since="2026-04-14"` will include commits from the next morning. Explicit `HH:MM` bounds force clean day windows.
 - For each changed file, extract the actual diff to summarize what changed (sections added, content removed, key edits)
 
 Skip:
@@ -51,7 +52,7 @@ GH_USER=$(gh api user --jq '.login')
 
 # Search commits for the target date (exact date match for backfill; >= for today)
 # Backfill (past date): committer-date:YYYY-MM-DD (exact day)
-# Today: committer-date:>=YYYY-MM-DD (same as before -- catches ongoing work)
+# Today: committer-date:>=YYYY-MM-DD (same as before — catches ongoing work)
 gh api "search/commits?q=author:${GH_USER}+committer-date:YYYY-MM-DD&sort=committer-date&per_page=100" \
   --header "Accept: application/vnd.github.cloak-preview+json" \
   --jq '.items[] | {sha: .sha[0:7], message: (.commit.message | split("\n") | .[0]), repo: .repository.full_name, url: .html_url}'
@@ -62,32 +63,51 @@ For each commit, extract:
 - Commit message (first line)
 - Repository name (use last path segment as repo name)
 
-**Repo to vault mapping:** Check `.claude/rules/vault/daily-notes.md` -- "Git Repo Mapping" table. Match GitHub repo names to local repo paths in the mapping table (compare the repo name segment, e.g., `user/[repo-name]` matches `~/Projects/[repo-name]`). If a match exists, group under that vault project.
+**Repo to vault mapping:** Check `.claude/rules/vault/daily-notes.md` → "Git Repo Mapping" table. Match GitHub repo names to local repo paths in the mapping table (compare the repo name segment, e.g., `[github-org/repo]` matches `~/Projects/[repo-name]`). If a match exists, group under that vault project.
 
 Skip:
 - Merge commits
 - Repos with no commits today
 - Dependabot / automated commits
 
-**3b. Local unpushed commits (supplement)**
+**3b. Local commit scan (supplement)**
 
-After GitHub results are collected, scan local repos for commits that haven't been pushed:
+After GitHub results are collected, scan ALL local commits for the target date window — not just unpushed. GitHub's `search/commits` API does not index private org repos, so pushed commits there are invisible to pass 3a and must be caught here. Do NOT use `--not --remotes` — it hides exactly those commits.
+
+**Scan the mapped repos directly, not via `find`.** The mapping table in `daily-notes.md` is the source of truth for which repos belong in the daily note. `find ~/Projects -name .git` is unreliable: duplicate clones at different paths return both, causing attribution ambiguity. It also picks up unmapped personal experiments that clutter the log.
+
 ```bash
-find ~/Projects -name ".git" -type d -print0 | while IFS= read -r -d '' gitdir; do
-  repo=$(dirname "$gitdir")
-  # Target date bounds: --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day"
-  # For today: --since="midnight" is equivalent
-  git -C "$repo" log --oneline --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day" --author="$(git -C "$repo" config user.email)" --not --remotes 2>/dev/null
+# Read mapped repo paths from daily-notes.md, then iterate
+# (pseudocode — implementation reads the table in rules/vault/daily-notes.md)
+#
+# IMPORTANT: do NOT name loop variables `path`, `cdpath`, `fpath`, or `manpath`.
+# In zsh these are tied to PATH/CDPATH/FPATH/MANPATH — iterating clobbers them
+# and `git`, `head`, etc. disappear from the loop body. Commands fail silently
+# when stderr is redirected to /dev/null. Use `repo` / `repo_path`.
+for repo_pattern in "${MAPPED_REPOS[@]}"; do
+  # Handle glob entries like ~/Projects/[org]/prototypes/*
+  for repo_path in $repo_pattern; do
+    [ -d "$repo_path/.git" ] || continue
+    git -C "$repo_path" log --oneline \
+      --after="YYYY-MM-DD 00:00" \
+      --before="YYYY-MM-DD+1day 00:00" \
+      --author="$(git -C "$repo_path" config user.email)" 2>/dev/null
+  done
 done
 ```
+
+**Prototype mapping:** For repos matched via glob (`[org]/prototypes/*`), resolve vault project by matching the subdirectory name against Portfolio notes. Fall back to `Code: <subdirectory-name>` if no match.
+
+**Unmapped repos:** If a commit comes back from pass 3a (GitHub) for a repo not in the mapping table, include it under `Code: repo-name`. This preserves the fallback for ad-hoc repos without needing find-based discovery.
 
 This catches:
 - Work committed locally but not yet pushed
 - Repos not hosted on GitHub (local-only projects)
+- Commits pushed to private org repos invisible to GitHub commit search
 
-**Deduplication:** If a commit SHA from local scan already appears in GitHub results, skip it. Only surface genuinely unpushed commits.
+**Deduplication:** Build the union of pass 3a (GitHub) and pass 3b (local) keyed by short SHA. If the same commit appears in both, keep a single entry (not marked local).
 
-For unpushed commits, add a `(local)` marker in the log output so the user knows these haven't been pushed yet.
+**Local marker:** Only add a `(local)` marker for commits that are genuinely unpushed. Determine this per-commit with `git branch -r --contains <sha>` — if it returns no remote branches, the commit is local-only.
 
 **Fallback:** If `gh` is not authenticated or the API call fails, fall back to the local-only scan (original behavior) and note the fallback in output.
 
@@ -97,7 +117,7 @@ For Calendar/ notes (meetings, threads):
 - Title (from filename or `aliases:`)
 - `context:` or `about:` to determine grouping
 - One-line summary of what happened (from content, `one-liner:`, or summary section)
-- **Accuracy:** The 3-8 word summary must come from what the note actually says. If the meeting summary is vague, the daily note stays vague -- do not sharpen. Preserve the specificity level of the source.
+- **Accuracy:** The 3-8 word summary must come from what the note actually says. If the meeting summary is vague, the daily note stays vague — do not sharpen. Preserve the specificity level of the source.
 
 For Contexts/ notes (git-tracked):
 - Title (from filename or `aliases:`)
@@ -113,7 +133,7 @@ For git commits:
 
 Format:
 ```markdown
-### Log
+## Log
 
 **[Context Name]**
 - [[Project A]]
@@ -148,11 +168,13 @@ Rules:
 
 **6. Update the daily note**
 
-Replace the `### Log` section content with the generated log.
+Replace the `## Log` section content with the generated log.
+
+**Remove the `## Today Briefing` section** (and its subsections: Meetings, Upcoming Milestones, Reminders). That section is populated by `/today` in the morning for the day ahead — it's stale ephemeral context by the time `/daily-note` runs at end of day. The Log is the historical record; the Today Briefing was scaffolding for the day.
 
 Preserve:
 - Frontmatter
-- Any other sections (if present)
+- Any other user-authored sections (e.g., manual notes, Highlights)
 
 **7. Commit Contexts/ changes (today only)**
 
@@ -160,7 +182,7 @@ After generating the log, commit Contexts/ changes to establish a clean baseline
 - `cd [vault-path]/Contexts && git add . && git commit -m "Daily snapshot: YYYY-MM-DD"`
 - This ensures tomorrow's diff only shows tomorrow's work
 
-**Skip this step when target date is in the past.** Backfill runs should not create snapshot commits -- the current working tree state belongs to today, not the backfilled date.
+**Skip this step when target date is in the past.** Backfill runs should not create snapshot commits — the current working tree state belongs to today, not the backfilled date.
 
 **8. Output**
 

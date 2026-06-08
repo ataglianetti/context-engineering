@@ -1,97 +1,29 @@
 ---
-description: Morning briefing — today's meetings, milestones, reminders
+description: Morning briefing — today's meetings, deadlines, reminders
 ---
 
 Morning briefing showing what's on the docket. Separate from `/first-light` (journaling) and `/daily-note` (end-of-day log).
+
+**Interactive by design — don't automate headlessly.** Meeting selection runs through `AskUserQuestion`, so `/today` can't run via launchd / `claude -p`: a headless run can't prompt, so it dumps the whole briefing into the daily note, which then lingers past end of day. Run it manually each morning.
 
 **Prerequisites:**
 - `icalBuddy` installed (`brew install ical-buddy`)
 - Calendar accounts synced to Apple Calendar via System Settings → Internet Accounts
 - Terminal.app granted Calendar access (Privacy & Security → Calendars)
 
-## 0. Temporal Catch-Up (Background)
+## 0. Temporal Catch-Up
 
-Check for and generate missing temporal notes. This runs **in parallel with the main briefing** using background agents — it should never delay the calendar review.
+Backfilling missing daily/weekly/monthly notes is handled by **`/temporal-catch-up`** — that command is the single source of truth for the catch-up logic (idempotent detection, evidence sources, oldest-first daily → weekly → monthly, the one-line report). It runs as **Workflow 3** below.
 
-### Execution
-
-1. **Launch a background agent** (via Agent tool with `run_in_background: true`) to handle all catch-up work:
-   - Daily note backfill (0a)
-   - Weekly note catch-up (0b)
-   - Monthly note catch-up (0c)
-2. **Proceed immediately** to Section 1 (Today's Meetings) without waiting
-3. When the background agent completes, append its output summary to the conversation
-
-### 0a. Daily note backfill (up to 7 days)
-
-Scan backward from yesterday to 7 days ago. Process oldest-first so weekly synthesis has all daily notes available.
-
-```
-For each candidate date (7 days ago → yesterday, oldest first):
-  1. Does Calendar/YYYY-MM-DD.md exist with substantive content in ## Log?
-     Skip if Log has 3+ non-empty bullets with real text.
-     Treat as missing if Log is absent, empty, or contains only
-     placeholder lines (bare `- `, single stub entries). → skip if substantive
-  2. Check for work evidence on that date:
-     a. GitHub commits:
-        GH_USER=$(gh api user --jq '.login')
-        gh api "search/commits?q=author:${GH_USER}+committer-date:YYYY-MM-DD" \
-          --header "Accept: application/vnd.github.cloak-preview+json" \
-          --jq '.total_count'
-     b. Calendar/ notes: glob Calendar/YYYY-MM-DD*.md
-        (meetings, threads created on that date)
-     c. Contexts/ commits:
-        git -C [vault-path]/Contexts log \
-          --since="YYYY-MM-DD" --until="YYYY-MM-DD+1day" --oneline
-  3. If no evidence from any source → skip (no empty notes for idle days)
-  4. If evidence found → generate daily note using /daily-note logic
-     with that specific date as the target argument
-```
-
-**Idempotency:** Step 1 prevents re-generating notes that already have content. A daily note is treated as missing if its `## Log` section has fewer than 3 non-empty bullets -- this catches template placeholders (`- `), partial stubs (e.g., a Reminders section exists but Log was never filled), and notes with only 1-2 trivial entries that don't reflect a full day's work.
-
-### 0b. Weekly note catch-up
-
-After daily backfill completes, check for missing weekly notes:
-
-```
-For each ISO week that has at least one day in the backfill window
-(yesterday through 7 days ago):
-  1. Does Calendar/YYYY-Www.md exist with content in ## Summary? → skip
-  2. Count daily notes for that week with populated ### Log sections
-     - Need at least 1 populated daily note to generate a meaningful weekly
-  3. If yes → generate weekly note using /weekly-note logic
-     with that week's identifier (e.g., "W08", "2026-W08")
-```
-
-Process weeks in chronological order.
-
-### 0c. Monthly note catch-up (days 1-5 only)
-
-Only runs if today is day 1-5 of the month:
-
-```
-  1. Does Calendar/YYYY-MM.md for last month exist
-     with content in ## Work (beyond just context headers)? → skip
-  2. Are there weekly notes for last month? → generate using /monthly-note logic
-     with last month as the target (e.g., "last month", "2026-01")
-```
-
-### 0d. Agent output
-
-The background agent should return a brief summary of what it generated. The orchestrator appends this to the conversation when the agent completes:
-
-```
-> Catch-up: Generated daily notes for Feb 19, Feb 20. Weekly note for W08.
-```
-
-If the agent found nothing to generate, it returns nothing and the orchestrator emits no output.
+Two `/today`-specific constraints, both already honored by the command:
+- **Inline, never a background agent** — writes need the live approval channel (a backgrounded run fails closed silently). Invoking `/temporal-catch-up` from here keeps it in the main session.
+- **Last, after the briefing** — so backfill never delays the interactive part.
 
 ---
 
 ## 1. Today's Meetings
 
-Run icalBuddy via Terminal.app (Cursor doesn't have Calendar TCC permission):
+Run icalBuddy via Terminal.app (some IDEs don't have Calendar TCC permission):
 ```bash
 osascript -e 'tell application "Terminal" to do script "icalBuddy -f eventsToday > /tmp/icalbuddy-output.txt 2>&1"'
 sleep 3
@@ -101,39 +33,15 @@ cat /tmp/icalbuddy-output.txt
 - Show time, title, calendar source (to distinguish contexts)
 - Flag meetings that have vault series notes (match title against `series:` frontmatter in Calendar/)
 - For series matches, note the last meeting date
+- **Anchor to the `Current local time:` line** (injected by the UserPromptSubmit hook, if present): split the list into already-past vs. still-upcoming meetings rather than dumping them flat, and adapt the framing to when `/today` is actually being run (a mid-afternoon run isn't a "morning briefing"). The clock can't confirm a meeting *occurred* — only that it's before/after now. If the time line is absent, list meetings flat as before.
 
-## 1.5. Upcoming Milestones
-
-Scan portfolio notes with `product-status: In Development` for flat milestone fields: `milestone:` (name) and `milestone-date:` (ISO date). Calculate days until each milestone relative to today.
-
-**Proximity markers (convention-based, no per-milestone config):**
-- `(OVERDUE)` — date has passed
-- `(!!)` — 14 days or fewer
-- `(!)` — 15-30 days
-- Listed, no marker — 31-60 days
-- Not surfaced — 60+ days out
-
-**Milestone lifecycle:**
-- `milestone:` + `milestone-date:` frontmatter is the next upcoming milestone only (flat, Obsidian-editable)
-- `## Status` table on the portfolio note is the full historical record
-- When a milestone passes: `/today` flags it `(OVERDUE)`. Session close handles cleanup — mark complete (with actual date) in Status table, advance `milestone:` and `milestone-date:` to the next row from the table, or clear both if no more milestones remain.
-
-**Output (inline in Workflow 1, after meetings):**
-```
-### Upcoming Milestones
-- (!!) Mar 12 — [Project] Business Commit Presentation ([Context Name])
-- (!) Mar 26 — [Project] Definition Validation ([Context Name])
-```
-
-If no milestones are within 60 days, omit this section entirely.
-
-## 1.6. Content Deadlines
+## 1.5. Content Deadlines
 
 Scan Post notes for upcoming `target-date:` values. Posts live in `Contexts/Personal/Content/Posts/` (all subdirectories).
 
 **Query:** Grep for `target-date:` across all Post notes. Parse the ISO date and compare to today.
 
-**Proximity markers (same convention as milestones):**
+**Proximity markers:**
 - `(OVERDUE)` — date has passed and `post-status:` is not `published`
 - `(!!)` — 14 days or fewer
 - `(!)` — 15-30 days
@@ -142,7 +50,7 @@ Scan Post notes for upcoming `target-date:` values. Posts live in `Contexts/Pers
 
 **Skip:** Posts with `post-status: published` (already shipped, regardless of date).
 
-**Output (inline in Workflow 1, after milestones):**
+**Output (inline in Workflow 1, after meetings):**
 ```
 ### Content Deadlines
 - (!!) Feb 27 — "Post Title" (Substack, draft)
@@ -181,15 +89,25 @@ If no reminders are due, omit this section.
 
 **Adding reminders:** During `/today` or any session, the user can say "remind me [thing] on [date]" and it gets added to the list. `/meeting-notes` can also suggest reminders from next steps (user approves before adding).
 
+## 2.5. Vault Health
+
+Run the read-only staleness check and surface its output **only if non-empty** (the script is silent when everything's clean — no "all good" line):
+
+```bash
+bash "$CLAUDE_PROJECT_DIR/.claude/hooks/vault-health.sh"
+```
+
+It flags overdue `/distill-memory` runs, `memory.md` decision-table bloat, Quiet/Paused projects past 14 days, and oversized work-state Left Off cells. Print whatever it returns verbatim, then let the user decide whether to act — don't auto-run the suggested fixes. If it returns nothing, omit this section entirely.
+
 ---
 
 ## 3. Output & Flow
 
 The briefing is **two sequential workflows**. Present each block, handle its interaction, then move to the next.
 
-### Workflow 1: Meetings + Milestones + Deadlines → Note Creation
+### Workflow 1: Meetings + Deadlines → Note Creation
 
-Present today's meetings, milestones (Section 1.5), content deadlines (Section 1.6), then immediately offer meeting note creation (Section 4). Resolve note creation before moving on.
+Present today's meetings, content deadlines (Section 1.5), then immediately offer meeting note creation (Section 4). Resolve note creation before moving on.
 
 ```
 ## Today — Wednesday, March 5
@@ -197,10 +115,6 @@ Present today's meetings, milestones (Section 1.5), content deadlines (Section 1
 ### Meetings
 - 10:00 AM — [Series Name] Standup ([Context Name]) — *series, last: Feb 26*
 - 2:00 PM — Team Sync ([Context Name])
-
-### Upcoming Milestones
-- (!!) Mar 12 — [Project] Business Commit Presentation ([Context Name])
-- (!) Mar 26 — [Project] Definition Validation ([Context Name])
 
 ### Content Deadlines
 - (OVERDUE) Feb 27 — "Post Title" (Substack, draft)
@@ -210,24 +124,35 @@ Present today's meetings, milestones (Section 1.5), content deadlines (Section 1
 → Create selected notes
 → Then continue to Workflow 2
 
-### Workflow 2: Reminders
+### Workflow 2: Reminders + Vault Health
 
-After meeting notes are handled, present due reminders (Section 2) if any exist.
+After meeting notes are handled, present due reminders (Section 2) if any exist, then the vault-health block (Section 2.5) if the script returned anything.
 
 ```
 ### Reminders (1)
 1. Prepare panel contribution — [[YYYY-MM-DD Meeting Source]]
 
 > Triage: "1: push march 17" or "1: done"
+
+⚠️ **Vault health**
+- 3 auto-memory entries past revisit date — run `/distill-memory`
 ```
 
 **Output is conversational, not written to any file.**
+
+### Workflow 3: Temporal Catch-Up (inline)
+
+After reminders are handled, run **`/temporal-catch-up`** inline in this session (see Section 0). It does the cheap existence scan first and stays silent if nothing's missing; otherwise it backfills oldest-first (daily → weekly → monthly) and reports one line. This is the only part of `/today` that writes notes to disk, and it runs last so it never delays the briefing.
 
 ---
 
 ## 4. Meeting Note Creation
 
 Runs as part of Workflow 1 (after meeting list, before reminders).
+
+### Person Note Lookup
+
+When matching attendee names to Person notes, use `Glob` with pattern `Contexts/*/People/{Attendee Name}*.md`. Do **not** use Grep with a filename glob — the content + filename glob combination silently fails in flat directories.
 
 ### Filter Events
 
@@ -241,6 +166,8 @@ From the icalBuddy output, **exclude** events that aren't real meetings:
 Use `AskUserQuestion` with `multiSelect: true`. Each option:
 - **Label:** `HH:MM AM — Event Title`
 - **Description:** Context + classification hint (e.g., "Series: [Series Name] Standup", "1:1", or "New meeting")
+
+**One option per meeting** — even when two look similar (e.g., two standups from different contexts), give each its own option. Never combine meetings into a single checkbox.
 
 **4-option cap:** `AskUserQuestion` supports max 4 options per question. When there are more than 4 eligible meetings, split into multiple rounds (e.g., "Meetings — morning" and "Meetings — afternoon"). Never silently drop meetings to fit the cap.
 
@@ -304,6 +231,13 @@ File: `Calendar/YYYY-MM-DD [Series Note Filename].md`
 
 Read the matched Person note. Pull `cadence:` (default "Ad-hoc") and `context:`.
 
+**Carry-forward harvest:** Look for a `## Carry Forward` section in the Person note (header may have parenthetical suffix, e.g., `## Carry Forward (next 1:1 agenda)`). If present:
+1. Capture every line from the header through the next `##` heading (or EOF), excluding the header line itself
+2. Seed `## Notes` with those bullets verbatim (preserve indentation)
+3. Remove the section from the Person note — header + body, plus one blank line after — so it doesn't double-fire on the following 1:1
+
+If no `## Carry Forward` section exists, seed `## Notes` with a single bare `- ` as usual.
+
 ```markdown
 ---
 type: Meeting
@@ -323,10 +257,12 @@ cssclasses:
 [[YYYY-MM-DD|Formatted Date]]
 
 ## Notes
--
+[harvested carry-forward bullets, or bare `- ` if none]
 ```
 
 File: `Calendar/YYYY-MM-DD [Person Name].md`
+
+After creating the meeting note, mention the harvest in the confirmation summary (e.g., "1 carry-forward item pulled from the Person note").
 
 #### Generic → Meeting
 

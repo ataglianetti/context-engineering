@@ -60,3 +60,9 @@ Map your local repos to vault projects so `/daily-note` can attribute commits co
 **Unpushed commits:** Local-only commits get a `(local)` marker: `` `a1b2c3d` (local) added provider ``
 
 Unmapped repos appear as `Code: repo-name`.
+
+**Prototype convention:** If you keep prototypes in a shared directory (e.g. `~/Projects/[org]/prototypes/<feature-name>/`), the `/daily-note` scan can iterate that directory and match each subdirectory's name against the vault Portfolio — avoiding duplicate clones and mapping-table churn when prototypes are created.
+
+## Contexts Snapshot (git attribution for vault work)
+
+`/daily-note` finds same-day vault changes by running `git log --since/--until` over `Contexts/`. That only works if `Contexts/` is committed regularly — otherwise edits pile up uncommitted and can't be attributed to a specific date. Consider an automated job (cron or a scheduled agent) that auto-commits `Contexts/` once or twice daily so same-day `/daily-note` runs capture most work.

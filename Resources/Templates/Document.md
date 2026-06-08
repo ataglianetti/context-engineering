@@ -1,6 +1,9 @@
 <%*
+// Check if this is a new file or inserting into existing file
+// tp.config.run_mode: 0 = CreateNewFromTemplate, 1 = AppendActiveFile (insertion)
 const isNewFile = tp.config.run_mode === 0;
 
+// If inserting into existing file, just output basic frontmatter and exit
 if (!isNewFile) {
 -%>---
 type: Document
@@ -11,54 +14,47 @@ project:
 parent:
 aliases:
 related:
+cover:
 archive: false
 created: <% tp.date.now("YYYY-MM-DD") %>
 modified:
+cssclasses:
 ---
 
 <%* } -%>
 <%* if (isNewFile) { -%>
 <%*
 
-// Step 1: Find and select context dynamically
-const allFiles = app.vault.getMarkdownFiles();
-const contexts = [];
+// For new files, continue with full prompts
+const contextOptions = ["Yamaha Guitar Group", "APM Music", "Personal"];
+const contextValue = await tp.system.suggester(
+  contextOptions,
+  contextOptions,
+  false,
+  "Select context (work area this document belongs to)"
+);
 
-for (const file of allFiles) {
-  if (!file.path.startsWith("Contexts/")) continue;
-  const cache = app.metadataCache.getFileCache(file);
-  if (cache && cache.frontmatter && cache.frontmatter.type === "Context") {
-    contexts.push(file.basename);
-  }
-}
-
-let contextValue;
-if (contexts.length === 0) {
-  new Notice("No contexts found. Run /setup first.", 5000);
+if (!contextValue) {
   await app.vault.delete(tp.file.find_tfile(tp.file.title));
   return;
-} else if (contexts.length === 1) {
-  contextValue = contexts[0];
-} else {
-  contextValue = await tp.system.suggester(
-    contexts,
-    contexts,
-    false,
-    "Select context"
-  );
-  if (!contextValue) {
-    await app.vault.delete(tp.file.find_tfile(tp.file.title));
-    return;
-  }
 }
 
-// Step 2: Get potential parent notes from selected context
-const parentTypes = ["Product", "Platform", "Initiative", "Feature"];
-const potentialParents = [];
+// Map nested contexts to their parent folder paths
+const nestedContexts = {
+  "Songwriting": "Personal/Songwriting"
+};
+const resolvedContext = nestedContexts[contextValue] || contextValue;
 
+// Get all potential parent notes (Documents can attach to any portfolio or work item) from the selected context
+const parentTypes = ["Product", "Platform", "Initiative", "Feature"];
+const allFiles = app.vault.getMarkdownFiles();
+
+// Filter files by type AND context
+const potentialParents = [];
 for (const file of allFiles) {
   const cache = app.metadataCache.getFileCache(file);
   if (cache?.frontmatter?.type && parentTypes.includes(cache.frontmatter.type)) {
+    // Only include parents that match the selected context
     let parentContext = cache.frontmatter.context;
     if (typeof parentContext === 'string') {
       parentContext = parentContext.replace(/^["'\s]+|["'\s]+$/g, '').replace(/^\[\[|\]\]$/g, '');
@@ -68,14 +64,18 @@ for (const file of allFiles) {
       potentialParents.push({
         file: file,
         displayName: file.basename,
-        type: cache.frontmatter.type
+        type: cache.frontmatter.type,
+        context: cache.frontmatter.context,
+        aliases: cache.frontmatter.aliases
       });
     }
   }
 }
 
+// Sort alphabetically
 potentialParents.sort((a, b) => a.displayName.localeCompare(b.displayName));
 
+// Show suggester - allow skipping with "No Parent"
 const parentOptions = ["No Parent", ...potentialParents.map(p => p.displayName)];
 const parentValues = [null, ...potentialParents];
 
@@ -83,7 +83,7 @@ const selectedParent = await tp.system.suggester(
   parentOptions,
   parentValues,
   false,
-  "Select parent"
+  "Select parent for this document (or choose 'No Parent')"
 );
 
 if (selectedParent === undefined) {
@@ -91,19 +91,19 @@ if (selectedParent === undefined) {
   return;
 }
 
-// Step 3: Prompt for document title
+// Prompt for document title
 const docTitle = await tp.system.prompt("Enter the document title.", "", false, false);
 if (!docTitle) {
   await app.vault.delete(tp.file.find_tfile(tp.file.title));
   return;
 }
 
-// Step 4: Prompt for document type
+// Prompt for document type
 const docType = await tp.system.suggester(
-  ["Product Requirements", "Specification", "Research", "Design Doc", "Ticket", "Reference", "Other"],
-  ["Product Requirements", "Specification", "Research", "Design Doc", "Ticket", "Reference", "Other"],
+  ["Product Requirements", "Specification", "Research", "Analysis", "Design Doc", "Ticket", "Reference", "Marketing", "Presentation", "Release Notes", "Other"],
+  ["Product Requirements", "Specification", "Research", "Analysis", "Design Doc", "Ticket", "Reference", "Marketing", "Presentation", "Release Notes", "Other"],
   false,
-  "Document type"
+  "Document type (category of documentation)"
 );
 
 if (!docType) {
@@ -116,19 +116,26 @@ let parentLink = "";
 let projectFile = null;
 
 if (selectedParent) {
+  // Format parent as wikilink
   parentLink = `"[[${selectedParent.file.basename}]]"`;
 
+  // Function to find project by walking up the parent chain
   async function findProject(parentFile) {
     const cache = app.metadataCache.getFileCache(parentFile);
     const projectTypes = ["Product", "Platform", "Initiative", "Feature"];
 
+    // If this file is a project-level type, return it
     if (cache?.frontmatter?.type && projectTypes.includes(cache.frontmatter.type)) {
       return parentFile;
     }
 
+    // If this file has a parent, check the parent
     if (cache?.frontmatter?.parent) {
       let parentName = cache.frontmatter.parent;
+      // Remove quotes and brackets from parent link
       parentName = parentName.replace(/^["'\s]+|["'\s]+$/g, '').replace(/^\[\[|\]\]$/g, '');
+
+      // Find the parent file
       const parentFile = app.vault.getMarkdownFiles().find(f => f.basename === parentName);
       if (parentFile) {
         return await findProject(parentFile);
@@ -138,9 +145,11 @@ if (selectedParent) {
     return null;
   }
 
+  // Try to find project from selected parent or its ancestors
   projectFile = await findProject(selectedParent.file);
 }
 
+// Build filename without project code (folder structure handles organization)
 let filename = docTitle;
 
 // Build frontmatter
@@ -149,25 +158,26 @@ frontmatter += 'type: Document\n';
 frontmatter += 'document-type: ' + (docType || '') + '\n';
 frontmatter += 'document-status: Draft\n';
 frontmatter += 'context: "[[' + contextValue + ']]"\n';
-
+// Add project field if found
 if (projectFile) {
   frontmatter += 'project: "[[' + projectFile.basename + ']]"\n';
 } else {
   frontmatter += 'project:\n';
 }
-
+// Add parent if exists
 if (parentLink) {
   frontmatter += 'parent: ' + parentLink + '\n';
 } else {
   frontmatter += 'parent:\n';
 }
-
 frontmatter += 'aliases:\n';
 frontmatter += '  - "' + docTitle + '"\n';
 frontmatter += 'related:\n';
+frontmatter += 'cover:\n';
 frontmatter += 'archive: false\n';
 frontmatter += 'created: ' + tp.date.now("YYYY-MM-DD") + '\n';
 frontmatter += 'modified:\n';
+frontmatter += 'cssclasses:\n';
 frontmatter += '---';
 
 tR = frontmatter;
@@ -176,6 +186,7 @@ tR = frontmatter;
 <% tp.file.cursor(1) %>
 
 <%*
+// Move file to project folder structure
 const existingFile = tp.file.find_tfile(filename);
 if (existingFile) {
   new Notice("Document already exists: " + filename, 5000);
@@ -185,10 +196,12 @@ if (existingFile) {
 
 let targetPath;
 if (projectFile) {
-  const projectFolderPath = "Contexts/" + contextValue + "/Portfolio/" + projectFile.basename + "/Documents";
+  // Move to project-specific Documents folder
+  const projectFolderPath = "Contexts/" + resolvedContext + "/Portfolio/" + projectFile.basename + "/Documents";
   targetPath = projectFolderPath + "/" + filename;
 } else {
-  const docsFolderPath = "Contexts/" + contextValue + "/Documents";
+  // No project found - move to context-level Documents folder
+  const docsFolderPath = "Contexts/" + resolvedContext + "/Documents";
   targetPath = docsFolderPath + "/" + filename;
 }
 await tp.file.move(targetPath);

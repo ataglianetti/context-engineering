@@ -1,4 +1,5 @@
 ---
+modified: 2026-02-11T20:44:36-08:00
 ---
 <%*
 // Get context from target file's frontmatter (not template's)
@@ -12,14 +13,17 @@ if (!context) {
 // Extract context name from wikilink format "[[Context Name]]"
 const contextName = context.replace(/\[\[|\]\]/g, '');
 
-// Build archive path dynamically from context name
-const archivePath = "Contexts/" + contextName + "/Archive";
+// Map contexts to archive paths (work contexts only)
+const contextPaths = {
+  "APM Music": "Contexts/APM Music/Archive",
+  "Yamaha Guitar Group": "Contexts/Yamaha Guitar Group/Archive",
+  "Personal": "Contexts/Personal/Archive"
+};
 
-// Verify the archive folder exists (or could exist)
-const archiveFolder = app.vault.getAbstractFileByPath(archivePath);
-if (!archiveFolder) {
-  // Create the archive folder if it doesn't exist
-  await app.vault.createFolder(archivePath);
+const archivePath = contextPaths[contextName];
+if (!archivePath) {
+  new Notice("Context '" + contextName + "' does not have an archive");
+  return;
 }
 
 // Set archive: true in frontmatter

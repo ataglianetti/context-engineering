@@ -3,10 +3,10 @@
 ## Hierarchy
 ```
 Contexts/
-├── [Organization A]/Portfolio/     (Projects, products, initiatives)
-├── [Organization B]/Portfolio/     (Projects, products, initiatives)
+├── [Context 1]/Portfolio/      (Projects, products, initiatives)
+├── [Context 2]/Portfolio/      (Projects, products, initiatives)
 ├── Personal/
-│   └── ... (Customize: side projects, creative work, etc.)
+│   └── ... (Customize: side projects, creative work, finances, etc.)
 
 Calendar/                            (Daily notes, weekly/monthly summaries, meetings)
 Resources/

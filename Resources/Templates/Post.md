@@ -74,16 +74,7 @@ if (!statusValue) {
 }
 
 // Context prompt (reuse existing pattern from Document.md)
-// Dynamically discover contexts from vault notes
-const contextFiles = app.vault.getMarkdownFiles().filter(f =>
-  app.metadataCache.getFileCache(f)?.frontmatter?.type === "Context"
-);
-const contextOptions = contextFiles.map(f => f.basename);
-if (contextOptions.length === 0) {
-  new Notice("No contexts found. Run /setup first.");
-  return;
-}
-contextOptions.push("Personal");
+const contextOptions = ["Yamaha Guitar Group", "APM Music", "Personal"];
 const contextValue = await tp.system.suggester(
   contextOptions,
   contextOptions,

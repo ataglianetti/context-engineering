@@ -1,16 +1,23 @@
 <%*
+// Check if this is a new file or inserting into existing file
+// tp.config.run_mode: 0 = CreateNewFromTemplate, 1 = AppendActiveFile (insertion)
 const isNewFile = tp.config.run_mode === 0;
 
+// If inserting into existing file, just output basic frontmatter
 if (!isNewFile) {
   tR += `---
 type: Person
 context:
+pronouns:
 company:
 teams:
 discipline:
 title:
 cadence:
 email:
+birthday:
+hire-date:
+website:
 aliases:
 tags:
 created: ${tp.date.now("YYYY-MM-DD")}
@@ -19,6 +26,7 @@ modified:
 
 `;
 } else {
+  // For new files, continue with full prompts
   // Prompt for person's name
   const personName = await tp.system.prompt("Enter the person's name.", "", false, false);
   if (!personName) {
@@ -26,40 +34,27 @@ modified:
     return;
   }
 
-  // Find and select context dynamically
-  const allFiles = app.vault.getMarkdownFiles();
-  const contexts = [];
+  // Prompt for context
+  const contextOptions = ["Yamaha Guitar Group", "APM Music", "Personal"];
+  const contextValue = await tp.system.suggester(
+    contextOptions,
+    contextOptions,
+    false,
+    "Select context (work area this person is associated with)"
+  );
 
-  for (const file of allFiles) {
-    if (!file.path.startsWith("Contexts/")) continue;
-    const cache = app.metadataCache.getFileCache(file);
-    if (cache && cache.frontmatter && cache.frontmatter.type === "Context") {
-      contexts.push(file.basename);
-    }
+  if (!contextValue) {
+    await app.vault.delete(tp.file.find_tfile(tp.file.title));
+    return;
   }
 
-  // Add Personal as an option
-  if (!contexts.includes("Personal")) {
-    contexts.push("Personal");
-  }
+  // Map nested contexts to their parent folder paths
+  const nestedContexts = {
+    "Songwriting": "Personal/Songwriting"
+  };
+  const resolvedContext = nestedContexts[contextValue] || contextValue;
 
-  let contextValue;
-  if (contexts.length === 1) {
-    contextValue = contexts[0];
-  } else {
-    contextValue = await tp.system.suggester(
-      contexts,
-      contexts,
-      false,
-      "Select context"
-    );
-    if (!contextValue) {
-      await app.vault.delete(tp.file.find_tfile(tp.file.title));
-      return;
-    }
-  }
-
-  // Parse name parts
+  // Parse name parts NOW before building frontmatter
   const nameParts = personName.trim().split(' ').filter(part => part.length > 0);
   const firstName = nameParts[0];
   const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1][0] : '';
@@ -68,9 +63,14 @@ modified:
   // Build frontmatter based on context
   let frontmatter = '---\n';
   frontmatter += 'type: Person\n';
-  frontmatter += 'context: "[[' + contextValue + ']]"\n';
 
+  // Format context as wikilink for all contexts
+  frontmatter += 'context: "[[' + contextValue + ']]"\n';
+  frontmatter += 'pronouns:\n';
+
+  // Add context-specific fields
   if (contextValue === "Personal") {
+    // Personal context fields
     frontmatter += 'relationship:\n';
     frontmatter += 'related:\n';
     frontmatter += 'birthday:\n';
@@ -78,12 +78,16 @@ modified:
     frontmatter += 'phone:\n';
     frontmatter += 'email:\n';
   } else {
+    // Work context fields
     frontmatter += 'company:\n';
     frontmatter += 'teams:\n';
     frontmatter += 'discipline:\n';
     frontmatter += 'title:\n';
     frontmatter += 'cadence:\n';
     frontmatter += 'email:\n';
+    frontmatter += 'birthday:\n';
+    frontmatter += 'hire-date:\n';
+    frontmatter += 'website:\n';
   }
 
   frontmatter += 'aliases:\n';
@@ -106,7 +110,7 @@ modified:
     return;
   }
 
-  const peopleFolderPath = "Contexts/" + contextValue + "/People";
+  const peopleFolderPath = "Contexts/" + resolvedContext + "/People";
   const targetPath = peopleFolderPath + "/" + personNameTrimmed;
   await tp.file.move(targetPath);
 }

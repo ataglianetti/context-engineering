@@ -16,7 +16,7 @@ When user requests clipboard copy:
 | Teams | RTF | `--rtf` |
 | Outlook | RTF | `--rtf` |
 | Slack | RTF | `--rtf` |
-| Confluence | Markdown | `--md` |
+| Confluence | RTF | `--rtf` |
 | Jira | Markdown | `--md` |
 | Plain text editor | Plain | `--plain` |
 
@@ -38,6 +38,10 @@ The script normalizes special characters before conversion to avoid Windows enco
 - Ellipsis (`…`) → three periods (`...`)
 
 This prevents the `â€"` artifacts that appear when UTF-8 content is misinterpreted as Windows-1252.
+
+## Sandbox Limitation
+
+RTF clipboard via `osascript` fails silently inside the Claude Code sandbox. The `osascript -e "set the clipboard to (read POSIX file ... as «class RTF »)"` call in `copy-rich.sh` returns success but nothing actually lands on the clipboard, so the user pastes empty. When this happens, fall back to `pbcopy` for plain text — that path works reliably. Reserve the `--rtf` flow for environments where the osascript bridge is available (i.e. not the sandbox).
 
 ## Behavioral Pattern
 

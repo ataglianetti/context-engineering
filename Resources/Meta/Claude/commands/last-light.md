@@ -4,6 +4,8 @@ description: Evening journal entry - prompts for reflection, cleans up dictation
 
 Evening reflection for the daily note's Last Light section.
 
+If a `Current local time:` line is present (UserPromptSubmit hook), let it shape the opener — a late-night reflection reads differently from an early-evening one, and if it's clearly morning, gently check whether `/first-light` was intended before writing into Last Light.
+
 **1. Find today's daily note**
 - Path: `Calendar/YYYY-MM-DD.md` (current date)
 - If it doesn't exist, create it using `Resources/Templates/Daily Note.md`
@@ -58,7 +60,7 @@ Do NOT:
 - Reorder their thoughts
 - Make it sound "professional" or polished
 - Add insights or reflections they didn't express
-- Use em-dashes (stream-of-consciousness text doesn't use them naturally -- they read as AI cleanup)
+- Use em-dashes (stream-of-consciousness text doesn't use them naturally — they read as AI cleanup)
 
 **5. Show the cleaned version**
 
@@ -70,12 +72,12 @@ If they edit, incorporate changes. If they approve, proceed.
 
 If `### Last Light` section exists, append to it.
 
-If it doesn't exist, insert it immediately AFTER the `### Log` section (after all log content):
+If it doesn't exist, insert it immediately AFTER the `## Log` section (after all log content):
 ```markdown
-### Log
+## Log
 [existing log content]
 
-### Last Light
+## Last Light
 [cleaned content here]
 ```
 
