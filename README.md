@@ -96,19 +96,36 @@ Answer the questions. Claude creates your context folders, people directory, por
 | `/update` | Pull scaffolding updates without touching content |
 | `/update-memory` | Manual session close |
 
-### Hooks (5)
+### Hooks (10)
 
-Two kinds of enforcement. The first three validate *format* on every file write. The last two are what stop your memory from rotting — they make the upkeep mechanical instead of relying on you to remember.
+Three kinds of enforcement. Some validate *format* on every file write. Some keep individual notes (meetings, threads) inside their length budget. And two keep your always-loaded memory from rotting — they make upkeep mechanical instead of relying on you to remember.
+
+**Format & integrity**
 
 | Hook | Behavior | Enforcement |
 |------|----------|-------------|
 | `validate-frontmatter.sh` | Checks `type:` exists and is valid; checks `context:` on context-linked types | Blocks |
 | `validate-dates.sh` | Ensures memory/work-state dates match today | Blocks |
 | `validate-wikilinks.sh` | Finds wikilinks pointing to non-existent notes | Warns |
+| `validate-day-of-week.sh` | In `Calendar/` notes, blocks when a written day name doesn't match the actual day for that date | Blocks |
+| `validate-meeting-date-link.sh` | Enforces the mandatory Meeting-note date wikilink format (`[[YYYY-MM-DD\|Month DDth, YYYY]]`) | Blocks |
+
+**Note-length budgets** (warn only — friction to prompt a consolidation pass)
+
+| Hook | Behavior | Enforcement |
+|------|----------|-------------|
+| `validate-meeting-bullets.sh` | Warns when a Meeting note has more than 6 top-level bullets under `## Summary` | Warns |
+| `validate-thread-budget.sh` | Warns when a Thread note drifts from current-state form (Summary too long, too many Key Points, bloated `one-liner:`) | Warns |
+| `writing-style-reminder.sh` | On Post / Application / Thread writes, nudges you to run a writing-style audit before presenting the draft | Warns |
+
+**Anti-rot** — the layer that makes context management mechanical
+
+| Hook | Behavior | Enforcement |
+|------|----------|-------------|
 | `session-close-guard.js` | On "done" / "wrapping up", blocks the session from ending if you did real work but didn't update `work-state.md`. Fires once, honors "skip memory", fails open. | Blocks (once) |
 | `validate-context-budget.sh` | A **ratchet** on the always-loaded `memory.md` / `work-state.md`: once a file is over its size budget, any edit that *grows* it is blocked; any edit that *shrinks* it always passes. Forces you to archive old entries before adding new, so the files can't bloat into a junk drawer. | Blocks growth only |
 
-The size budgets in `validate-context-budget.sh` (decision-row count, open-thread count, per-cell length) are constants at the top of the script — tune them to your own tolerance.
+The size budgets in `validate-context-budget.sh` (decision-row count, open-thread count, per-cell length) and the thresholds in the note-length hooks are constants at the top of each script — tune them to your own tolerance.
 
 ### Templates (20+)
 
