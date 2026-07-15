@@ -71,4 +71,4 @@ The system separates **scaffolding** (rules, memory, hooks, templates) from **co
 
 Rules load based on file paths — edit a file in `Contexts/Acme Corp/` and Acme-specific rules activate. Core rules load always. This keeps context budgets focused: ~3K tokens always present, plus only what's relevant to current work.
 
-For the deep dive on this architecture, see the [Substack series](https://ataglianetti.substack.com/).
+For the deep dive on this architecture, see the [Substack series](https://truebypass.ai).
