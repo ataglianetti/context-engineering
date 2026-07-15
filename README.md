@@ -96,13 +96,19 @@ Answer the questions. Claude creates your context folders, people directory, por
 | `/update` | Pull scaffolding updates without touching content |
 | `/update-memory` | Manual session close |
 
-### Hooks (3)
+### Hooks (5)
+
+Two kinds of enforcement. The first three validate *format* on every file write. The last two are what stop your memory from rotting — they make the upkeep mechanical instead of relying on you to remember.
 
 | Hook | Behavior | Enforcement |
 |------|----------|-------------|
 | `validate-frontmatter.sh` | Checks `type:` exists and is valid; checks `context:` on context-linked types | Blocks |
 | `validate-dates.sh` | Ensures memory/work-state dates match today | Blocks |
 | `validate-wikilinks.sh` | Finds wikilinks pointing to non-existent notes | Warns |
+| `session-close-guard.js` | On "done" / "wrapping up", blocks the session from ending if you did real work but didn't update `work-state.md`. Fires once, honors "skip memory", fails open. | Blocks (once) |
+| `validate-context-budget.sh` | A **ratchet** on the always-loaded `memory.md` / `work-state.md`: once a file is over its size budget, any edit that *grows* it is blocked; any edit that *shrinks* it always passes. Forces you to archive old entries before adding new, so the files can't bloat into a junk drawer. | Blocks growth only |
+
+The size budgets in `validate-context-budget.sh` (decision-row count, open-thread count, per-cell length) are constants at the top of the script — tune them to your own tolerance.
 
 ### Templates (20+)
 

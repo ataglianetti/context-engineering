@@ -21,6 +21,25 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-wikilinks.sh\"",
             "timeout": 5,
             "statusMessage": "Checking wikilinks..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-context-budget.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking context budget..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-close-guard.js\"",
+            "timeout": 10,
+            "statusMessage": "Checking session close..."
           }
         ]
       }
