@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "source": "https://github.com/ataglianetti/context-management-starter-kit",
+  "source": "https://github.com/ataglianetti/context-engineering",
   "description": "File classification for /update command. Scaffolding files are overwritten on update. Content files are never touched. Hybrid files have section-level merge rules.",
   "files": {
     "scaffolding": [
