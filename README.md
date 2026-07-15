@@ -1,6 +1,8 @@
-# Context OS — Personal Knowledge System Starter Kit
+# Context Engineering
 
-A personal operating system built on Claude Code and Obsidian. Persistent memory, modular rules, mechanical enforcement, and 17 commands that work for any knowledge worker.
+A personal knowledge system for Claude Code + Obsidian that **builds itself to fit you, then enforces itself so it doesn't rot.**
+
+Run `/setup` and it interviews you, then *generates* your rules, contexts, memory, and a thinking partner calibrated to your domain — not a template pack you fill in by hand. Hooks then enforce the system on every write: format stays valid, notes stay inside their length budget, and your always-loaded memory can't bloat into a junk drawer.
 
 Not a template library. An architecture.
 
@@ -33,8 +35,8 @@ Most AI productivity systems give you templates and commands. This gives you the
 ### 1. Clone
 
 ```bash
-git clone https://github.com/ataglianetti/context-management-starter-kit.git
-cd context-management-starter-kit
+git clone https://github.com/ataglianetti/context-engineering.git
+cd context-engineering
 ```
 
 ### 2. Open in Obsidian
