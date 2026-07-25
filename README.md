@@ -80,7 +80,7 @@ Answer the questions. Claude creates your context folders, people directory, por
 
 | Command | What it does |
 |---------|-------------|
-| `/setup` | First-time onboarding (6 phases) |
+| `/setup` | First-time onboarding (Phase 0–6) |
 | `/today` | Morning briefing — meetings, open items, threads |
 | `/daily-note` | End-of-day log from vault + git activity |
 | `/meeting-notes` | Format rough notes into structured meeting note |
