@@ -129,6 +129,14 @@ Three kinds of enforcement. Some validate *format* on every file write. Some kee
 
 The size budgets in `validate-context-budget.sh` (decision-row count, open-thread count, per-cell length) and the thresholds in the note-length hooks are constants at the top of each script — tune them to your own tolerance.
 
+**Context injection** — not validation, and not one of the 10 above
+
+`settings.json` also carries a `UserPromptSubmit` hook: a one-line `date` command (no script file) that prepends `Current local time: HH:MM TZ, Weekday YYYY-MM-DD` to every message you send. It never blocks or warns — it just gives Claude a live clock, which the session-start date alone doesn't provide.
+
+That matters more than it sounds. Without it, Claude can't tell a Tuesday from a Saturday or morning from midnight, and it has no reliable way to resolve "today," "this week," or "is that milestone overdue?" — the date it gets at session start also degrades across long conversations. The rule in `rules/core/session-protocol.md` tells Claude to use the line when present, proceed without it when absent (some Claude surfaces don't run hooks), never invent a time, and prefer it over any date written inside a note — a `created:` field records when a note was made, not what time it is now.
+
+It needs no dependencies beyond `date`. To verify it after setup, run the command from `settings.json` directly: it should print one line of JSON and exit 0.
+
 ### Templates (20+)
 
 Meeting, Thread, Document, Person, Context, Product, Platform, Initiative, Feature, Daily Note, Weekly Note, MOC, Definition, Reference, Post, Framework, and more.
