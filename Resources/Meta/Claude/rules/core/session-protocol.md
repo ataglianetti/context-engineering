@@ -11,6 +11,8 @@
 ### Time awareness
 A `UserPromptSubmit` hook injects a `Current local time: HH:MM TZ, Weekday YYYY-MM-DD` line at the top of each message (settings.json). **If that line is present, use it** for time-of-day reasoning the date alone can't give: weekday vs. weekend, morning vs. evening, whether a listed meeting is already past, late-night pacing. **If it's absent, proceed without — never infer a clock time the model doesn't have.** Hook absence is a normal state (settings not reloaded yet, a Claude surface that doesn't run hooks). This is the live "now"; the session-start `currentDate` is the same date but survives context compaction less reliably.
 
+Use it for anything date-relative: resolving "today," "yesterday," "this week," "last month"; naming or locating daily notes; computing how stale a note is; deciding whether a dated task or milestone is overdue. **It also outranks any date inside a note** — a `created:`/`modified:` field or a `YYYY-MM-DD` filename records when the note was made, not what time it is now. When the two disagree about "now," the injected line wins.
+
 ## Session Close Detection
 Update state when user signals session is ending. Recognize intent, not exact phrases:
 - **Explicit memory request:** "update memory", "save this", "remember this"
@@ -33,8 +35,8 @@ The key is recognizing the intent to close. Variations like "bye bye", "done for
 	- Leave unchanged any context that saw no activity (its prior Last Session date stays)
 2. For each project with activity this session:
 	- Update "Last Touched" date
-	- Update "Left Off" — **current state + next action only, 2–3 sentences.** Keep the near-term milestone date/name (the milestone-drift hook checks for it). This cell is auto-loaded every session, so it must stay short. **It is not a session log.** Do not append `Prior (date): …` narrative chains here — that history belongs in the project's `Session Log.md` (see below). If a cell starts growing a dated chain, that's the signal to move the depth to the Session Log and cut the cell back.
-	- Update "State" if changed (Active, Blocked, Quiet, Paused)
+	- Update "Left Off" — **current state + next action only, 2–3 sentences.** Keep the near-term milestone date/name. This cell is auto-loaded every session, so it must stay short. **It is not a session log.** Do not append `Prior (date): …` narrative chains here — that history belongs in the project's `Session Log.md` (see below). If a cell starts growing a dated chain, that's the signal to move the depth to the Session Log and cut the cell back.
+	- Update "State" if changed (Active, Blocked, Waiting, Quiet, Paused, Shipped). `Blocked` = an internal dependency; `Waiting` = an external party owes us. The distinction matters at session start — `Waiting` items need a nudge, `Blocked` items need a decision.
 3. Add new project rows when substantive work happens on something not yet tracked
 4. Remove projects Quiet for 14+ days (portfolio notes + daily notes retain history)
 
@@ -54,25 +56,24 @@ Milestones live in the body Status table only — there is no `milestone:` front
 
 ### Conditionally: Update `memory.md`
 Only when something in its sections actually changed:
-- New decision → add to Recent Decisions (keep last 10-15)
-- New open thread → add to Open Threads
+- New decision → add to Recent Decisions as a **compact row**: the decision + a one-line rationale + a pointer to wherever the full reasoning lives (a dated note, the project's Session Log). Keep the row under ~700 characters — the narrative goes in the linked note, not the table. **Note-on-entry:** the cap is 8 rows. When adding a 9th, move the oldest row's content out to a note and delete the row *in the same session*, so the always-loaded file never sits over budget. **Escape alias pipes inside table rows** (`[[Note\|alias]]`) — an unescaped `|` splits the cell and shifts every column right.
+- New open thread → add to Open Threads, one short entry. If the detail runs long (~400+ chars), move the detail to an archive note and leave a one-line index entry here (name + one sentence + pointer).
 - New pattern learned → add to Patterns & Preferences
 
-### Conditionally: Offer Session Log
+> Budgets here are mechanically enforced by `hooks/validate-context-budget.sh` (the ratchet): growth while over budget blocks with remediation, but **an edit that shrinks the file always passes** — so the archive move is never the thing that gets blocked.
 
-Offer a session log entry when the session was **substantial** — any of:
+### Conditionally: Write Session Log
+
+Write a session log entry — silently, as part of session close, without asking — when the session was **substantial** — any of:
 - Multi-step work on a single project
 - Decisions with alternatives considered
 - Paths explored and rejected
 - Work that shifted from original intent
 
-**Skip the offer** for quick Q&A, simple edits, routine updates.
+**Skip** for quick Q&A, simple edits, routine updates. No prompt either way: if it clears the bar, just write it; if it doesn't, stay silent.
 
-**Offer format:**
-> Session log entry for [Project]? (captures intent, outcome, findings, handoff)
-
-If accepted:
-1. Find or create `Session Log.md` in the project's `Documents/` folder
+Then:
+1. Find the project's **existing** Session Log and append to it — check the project's `Documents/` folder first, but a log may also live one level up at the context's `Documents/` folder under a prefixed name (`[Project] Session Log.md`). Append to whichever exists rather than spawning a second. If none exists, create `Session Log.md` in the project's `Documents/` folder.
 2. **Prepend** a new entry (newest first) under the `# Session Log` heading
 3. Use this structure:
 
@@ -104,6 +105,7 @@ Always confirm at session close:
 **When updates made:**
 > Memory updated:
 > - Work state: [projects updated]
+> - Session log: [project] (if written)
 > - Decision added: [decision] (if any)
 
 **When no substantive updates needed:**
