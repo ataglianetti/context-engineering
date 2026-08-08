@@ -11,7 +11,7 @@
 |------|----------|-----------|---------|
 | | | | |
 
-*Keep last 10-15 decisions. Archive older ones.*
+*Keep 8 decisions, compact: decision + one-line rationale + a pointer to the full write-up. On entry once at the cap, archive the oldest row out to a note and delete it in the same session. Enforced by `hooks/validate-context-budget.sh`.*
 
 ---
 
