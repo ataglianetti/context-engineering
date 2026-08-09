@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "source": "https://github.com/ataglianetti/context-engineering",
   "description": "File classification for /update command. Scaffolding files are overwritten on update. Content files are never touched. Hybrid files have section-level merge rules.",
   "files": {
@@ -13,6 +13,7 @@
       "Resources/Meta/Claude/rules/vault/daily-notes.md",
       "Resources/Meta/Claude/rules/vault/file-management.md",
       "Resources/Meta/Claude/rules/vault/summarization.md",
+      "Resources/Meta/Claude/rules/vault/technical-register.md",
       "Resources/Meta/Claude/rules/vault/vault-structure.md",
       "Resources/Meta/Claude/commands/daily-note.md",
       "Resources/Meta/Claude/commands/draft-reply.md",
