@@ -56,7 +56,7 @@ Answer the questions. Claude creates your context folders, people directory, por
 
 ## What You Get
 
-### Rules (15 files)
+### Rules (16 files)
 
 | File | Purpose |
 |------|---------|
@@ -74,6 +74,7 @@ Answer the questions. Claude creates your context folders, people directory, por
 | `vault/summarization.md` | Accuracy rules for any summarization |
 | `vault/clipboard.md` | Clipboard copy formatting for external apps |
 | `vault/confidence-convention.md` | Confidence flagging for research output |
+| `vault/technical-register.md` | Orientation vs. reference layers in specs, tickets, and PRs |
 | `vault/vault-structure.md` | Note types, hierarchy, portfolio patterns |
 
 ### Commands (17)
@@ -183,6 +184,8 @@ Resources/Meta/Claude/       ← actual files (visible to Obsidian, synced)
 │   │   ├── daily-notes.md
 │   │   ├── summarization.md
 │   │   ├── clipboard.md
+│   │   ├── confidence-convention.md
+│   │   ├── technical-register.md
 │   │   └── vault-structure.md
 │   └── [context]/           # Created during /setup, loads per path
 │       ├── context.md
