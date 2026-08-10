@@ -9,8 +9,10 @@
 # Claude Code - user-specific state (both pre- and post-symlink paths)
 .claude/logs/
 .claude/setup-state.json
+.claude/settings.local.json
 Resources/Meta/Claude/logs/
 Resources/Meta/Claude/setup-state.json
+Resources/Meta/Claude/settings.local.json
 
 # Node
 node_modules/
