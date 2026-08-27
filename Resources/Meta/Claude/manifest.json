@@ -1,0 +1,78 @@
+{
+  "version": "1.1.0",
+  "source": "https://github.com/ataglianetti/context-engineering",
+  "description": "File classification for /update command. Scaffolding files are overwritten on update. Content files are never touched. Hybrid files have section-level merge rules.",
+  "files": {
+    "scaffolding": [
+      "Resources/Meta/Claude/rules/core/hard-walls.md",
+      "Resources/Meta/Claude/rules/core/document-traversal.md",
+      "Resources/Meta/Claude/rules/core/intent-interpretation.md",
+      "Resources/Meta/Claude/rules/core/session-protocol.md",
+      "Resources/Meta/Claude/rules/vault/clipboard.md",
+      "Resources/Meta/Claude/rules/vault/confidence-convention.md",
+      "Resources/Meta/Claude/rules/vault/daily-notes.md",
+      "Resources/Meta/Claude/rules/vault/entity-resolution.md",
+      "Resources/Meta/Claude/rules/vault/file-management.md",
+      "Resources/Meta/Claude/rules/vault/summarization.md",
+      "Resources/Meta/Claude/rules/vault/technical-register.md",
+      "Resources/Meta/Claude/rules/vault/vault-structure.md",
+      "Resources/Meta/Claude/commands/daily-note.md",
+      "Resources/Meta/Claude/commands/draft-reply.md",
+      "Resources/Meta/Claude/commands/meeting-notes.md",
+      "Resources/Meta/Claude/commands/new-project.md",
+      "Resources/Meta/Claude/commands/project-status.md",
+      "Resources/Meta/Claude/commands/refresh.md",
+      "Resources/Meta/Claude/commands/research.md",
+      "Resources/Meta/Claude/commands/save-reference.md",
+      "Resources/Meta/Claude/commands/save-thread.md",
+      "Resources/Meta/Claude/commands/setup.md",
+      "Resources/Meta/Claude/commands/today.md",
+      "Resources/Meta/Claude/commands/update-memory.md",
+      "Resources/Meta/Claude/commands/update-thread.md",
+      "Resources/Meta/Claude/commands/update.md",
+      "Resources/Meta/Claude/commands/weekly-note.md",
+      "Resources/Meta/Claude/hooks/validate-dates.sh",
+      "Resources/Meta/Claude/hooks/validate-frontmatter.sh",
+      "Resources/Meta/Claude/hooks/validate-wikilinks.sh",
+      "Resources/Meta/Claude/hooks/validate-context-budget.sh",
+      "Resources/Meta/Claude/hooks/session-close-guard.js",
+      "Resources/Meta/Claude/hooks/validate-day-of-week.sh",
+      "Resources/Meta/Claude/hooks/validate-meeting-bullets.sh",
+      "Resources/Meta/Claude/hooks/validate-thread-budget.sh",
+      "Resources/Meta/Claude/hooks/writing-style-reminder.sh",
+      "Resources/Meta/Claude/scripts/copy-rich.sh",
+      "Resources/Meta/Claude/scripts/export-style.css",
+      "Resources/Meta/Claude/reminders.md",
+      "Resources/Meta/Claude/settings.json",
+      "Resources/Meta/Claude/manifest.json",
+      "CLAUDE.md",
+      "README.md",
+      "Resources/Meta/Claude/commands/map-codebase.md",
+      "Resources/Meta/Claude/agents/debugger.md",
+      "Resources/Meta/Claude/agents/implementer.md",
+      "Resources/Meta/Claude/agents/mapper.md",
+      "Resources/Meta/Claude/agents/planner.md",
+      "Resources/Meta/Claude/agents/researcher.md",
+      "Resources/Meta/Claude/agents/reviewer.md",
+      "Resources/Meta/Claude/agents/verifier.md"
+    ],
+    "content": [
+      "Resources/Meta/Claude/rules/core/user-profile.md",
+      "Resources/Meta/Claude/rules/core/thinking-partner.md",
+      "Resources/Meta/Claude/rules/core/memory.md",
+      "Resources/Meta/Claude/rules/core/work-state.md",
+      "Resources/Meta/Claude/rules/[context]/context.md",
+      "Resources/Meta/Claude/rules/[context]/collaborators.md",
+      "Resources/Meta/Claude/rules/[context]/portfolio.md"
+    ],
+    "hybrid": [
+      {
+        "path": "Resources/Meta/Claude/rules/core/writing-style.md",
+        "user_sections": [
+          "## Voice Calibration"
+        ],
+        "description": "Voice Calibration table rows are user content generated during /setup. All other sections are scaffolding — in particular the Tells table, which describes generated-prose artifacts rather than a house style, and should NOT be regenerated per user. Users add rows; /setup does not author them."
+      }
+    ]
+  }
+}
