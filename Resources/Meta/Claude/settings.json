@@ -1,0 +1,83 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-frontmatter.sh\"",
+            "timeout": 5,
+            "statusMessage": "Validating frontmatter..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-dates.sh\"",
+            "timeout": 5,
+            "statusMessage": "Validating dates..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-wikilinks.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking wikilinks..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-context-budget.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking context budget..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-day-of-week.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking day-of-week..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-meeting-bullets.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking meeting bullets..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-thread-budget.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking thread budget..."
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/writing-style-reminder.sh\"",
+            "timeout": 5,
+            "statusMessage": "Checking writing style..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-close-guard.js\"",
+            "timeout": 10,
+            "statusMessage": "Checking session close..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "date '+{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Current local time: %H:%M %Z, %A %Y-%m-%d\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
